@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Video URL Tester (with Drive support)</title>
+    <style>
+        body {
+            font-family: system-ui, Arial, sans-serif;
+            padding: 20px;
+            max-width: 880px;
+            margin: auto;
+        }
+
+        input,
+        button {
+            font-size: 16px;
+            padding: 8px;
+        }
+
+        #url {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .row {
+            display: flex;
+            gap: 8px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .row>* {
+            flex: 1;
+        }
+
+        video,
+        iframe {
+            width: 100%;
+            max-height: 70vh;
+            background: #000;
+        }
+
+        small {
+            color: #666;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Video URL Tester</h1>
+
+    <label for="url">Enter video URL (.mp4, .webm, HLS .m3u8 via player, or Google Drive link)</label>
+    <input id="url" type="url"
+        placeholder="https://example.com/video.mp4 or https://drive.google.com/file/d/FILE_ID/view" />
+
+    <div class="row">
+        <button id="load">Load</button>
+        <button id="clear">Clear</button>
+        <label style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+            <input id="muted" type="checkbox" checked /> Muted
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+            <input id="autoplay" type="checkbox" /> Autoplay
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;flex:0 0 auto;">
+            <input id="loop" type="checkbox" /> Loop
+        </label>
+    </div>
+
+    <!-- Native HTML5 player -->
+    <video id="player" class="hidden" controls playsinline></video>
+
+    <!-- Fallback for Google Drive /preview -->
+    <iframe id="driveFrame" class="hidden" frameborder="0" allow="autoplay; fullscreen; picture-in-picture"></iframe>
+
+    <p>
+        Status: <span id="status">Idle</span><br />
+        <small>
+            Drive links are embedded via /preview in an iframe to avoid CORS issues; direct HTML5 playback from Drive is
+            not supported reliably.[77][70]
+        </small>
+    </p>
+
+    <script>
+        const urlEl = document.getElementById('url');
+        const player = document.getElementById('player');
+        const frame = document.getElementById('driveFrame');
+        const statusEl = document.getElementById('status');
+        const muted = document.getElementById('muted');
+        const autoplay = document.getElementById('autoplay');
+        const loop = document.getElementById('loop');
+
+        const DRIVE_FILE_RE = /https?:\/\/drive\.google\.com\/file\/d\/([^/]+)\/?/i;
+        const DRIVE_UC_RE = /https?:\/\/drive\.google\.com\/uc\?id=([^&]+)/i;
+
+        function setStatus(t) { statusEl.textContent = t; }
+
+        function isDriveLink(u) {
+            return DRIVE_FILE_RE.test(u) || DRIVE_UC_RE.test(u);
+        }
+
+        function toDrivePreview(u) {
+            let id = null;
+            const m1 = u.match(DRIVE_FILE_RE);
+            if (m1) id = m1[1];
+            const m2 = u.match(DRIVE_UC_RE);
+            if (!id && m2) id = m2[1];
+            return id ? `https://drive.google.com/file/d/${id}/preview` : null;
+        }
+
+        function hideAll() {
+            player.classList.add('hidden');
+            frame.classList.add('hidden');
+            player.pause();
+            player.removeAttribute('src');
+            frame.removeAttribute('src');
+        }
+
+        async function loadUrl() {
+            const src = (urlEl.value || '').trim();
+            if (!src) { setStatus('Please enter a URL'); return; }
+            hideAll();
+
+            if (isDriveLink(src)) {
+                const preview = toDrivePreview(src);
+                if (!preview) { setStatus('Could not parse Drive file ID'); return; }
+                frame.src = preview;
+                frame.classList.remove('hidden');
+                setStatus('Loaded via Google Drive preview iframe');
+                return;
+            }
+
+            // Non-Drive: try native <video>
+            player.muted = muted.checked;
+            player.autoplay = autoplay.checked;
+            player.loop = loop.checked;
+            player.src = src;
+            player.classList.remove('hidden');
+            setStatus('Loading…');
+
+            try {
+                player.load();
+                if (autoplay.checked) {
+                    try { await player.play(); } catch { }
+                }
+                setStatus('Loaded');
+            } catch (e) {
+                setStatus('Load error: ' + e.message);
+            }
+        }
+
+        document.getElementById('load').addEventListener('click', loadUrl);
+        document.getElementById('clear').addEventListener('click', hideAll);
+
+        player.addEventListener('error', () => {
+            const err = player.error;
+            const map = { 1: 'Aborted', 2: 'Network error', 3: 'Decoding/format', 4: 'Not supported or CORS' };
+            setStatus('Player error: ' + (map[err?.code] || 'Unknown'));
+        });
+        player.addEventListener('loadedmetadata', () => setStatus('Metadata loaded'));
+        player.addEventListener('canplay', () => setStatus('Can play'));
+        player.addEventListener('playing', () => setStatus('Playing'));
+    </script>
+</body>
+
+</html>

@@ -29,6 +29,31 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Environment: MongoDB and Learn data
+
+- Create a `.env.local` file in the project root and set your Mongo connection string:
+
+```bash
+# .env.local
+MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority
+```
+
+- Ensure the database has collections per our DB→UI contract in `docs/db_to_ui_contract.md`:
+  - `lessons`
+  - `content_blocks`
+  - `anchors`
+
+- The lessons page endpoints expect the following linking flexibility:
+  - `lessons.slug` is used to fetch a lesson.
+  - `content_blocks.lesson_id` can be either the lesson `_id` or the lesson `slug`.
+  - `content_blocks.payload.items[*].anchor_ids` and `content_blocks.anchor_ids` link to `anchors._id`.
+
+- Dev commands:
+  - Install deps: `npm install`
+  - Run: `npm run dev`
+
+Tip: If you see no lessons/blocks, verify the linkage above and that `MONGODB_URI` is correctly set. External links open in a new tab with `rel="noreferrer"`.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
