@@ -7,7 +7,7 @@ import { ArrowLeft, Target, PieChart, Calendar, Lightbulb, BookOpen, Activity, A
 
 export type GameIntroHeaderProps = {}
 
-export function GameIntroHeader({}: GameIntroHeaderProps) {
+export function GameIntroHeader({ }: GameIntroHeaderProps) {
   const router = useRouter()
 
   return (
@@ -25,6 +25,34 @@ export function GameIntroHeader({}: GameIntroHeaderProps) {
               <Target className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">DiversifyQuest</h1>
+            <div className="ml-6 pt-2 hidden md:block">
+              <div className="flex items-center gap-3 text-sm">
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-white/70">
+                  <Calendar className="w-4 h-4 text-blue-600" />
+                  <span className="text-gray-800 font-medium">1. Review Events</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-white/70">
+                  <BookOpen className="w-4 h-4 text-amber-600" />
+                  <span className="text-gray-800 font-medium">2. Take Quiz</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-white/70">
+                  <PieChart className="w-4 h-4 text-emerald-600" />
+                  <span className="text-gray-800 font-medium">3. Rebalance</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-white/70">
+                  <Target className="w-4 h-4 text-purple-600" />
+                  <span className="text-gray-800 font-medium">4. AI Review</span>
+                </div>
+                <ArrowRight className="w-4 h-4 text-gray-400" />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-white/70">
+                  <Activity className="w-4 h-4 text-blue-600" />
+                  <span className="text-gray-800 font-medium">5. Performance</span>
+                </div>
+              </div>
+            </div>
           </div>
           <Button
             variant="ghost"
@@ -38,7 +66,7 @@ export function GameIntroHeader({}: GameIntroHeaderProps) {
         </div>
 
         {/* Flow timeline */}
-        <div className="mb-4 hidden md:block">
+        {/* <div className="mb-4 hidden md:block">
           <div className="flex items-center gap-3 text-sm">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full border bg-white/70">
               <Calendar className="w-4 h-4 text-blue-600" />
@@ -65,7 +93,7 @@ export function GameIntroHeader({}: GameIntroHeaderProps) {
               <span className="text-gray-800 font-medium">5. Performance</span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <div className="grid gap-4 md:grid-cols-5">
           <motion.div
@@ -76,11 +104,11 @@ export function GameIntroHeader({}: GameIntroHeaderProps) {
           >
             <h2 className="text-xl font-semibold text-gray-900">Master diversification across 12 quarters</h2>
             <p className="mt-2 text-gray-700">
-              Build a balanced portfolio with ₹10L starting capital, navigate realistic market events each
-              quarter, and optimize your holdings. Your goal: finish 12 quarters with strong returns and
-              healthy diversification.
+              Build a balanced portfolio with <b className="font-bold text-brand-600">₹10L starting capital</b> , navigate realistic market events each
+              quarter, and optimize your holdings. <br /><br />
+              <b className="font-bold text-brand-600">Your goal:</b> finish 12 quarters with strong returns and healthy diversification.
             </p>
-            <ul className="mt-4 grid gap-2 text-sm text-gray-700">
+            <ul className="mt-4 grid grid-cols-2 gap-2 text-sm text-gray-700">
               <li className="flex items-center gap-2"><Calendar className="h-4 w-4 text-blue-500" /> Review market events to understand the quarter</li>
               <li className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-amber-600" /> Pass a short dynamic quiz to unlock rebalancing</li>
               <li className="flex items-center gap-2"><PieChart className="h-4 w-4 text-emerald-600" /> Build and rebalance using whole-share buys/sells</li>

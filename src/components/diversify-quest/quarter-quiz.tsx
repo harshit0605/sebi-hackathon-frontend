@@ -7,9 +7,9 @@ import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { useGameState, type GameEvent } from '@/hooks/use-game-state'
+import { useGameState, type GameEvent, type PortfolioHolding } from '@/hooks/use-game-state'
 import { cn } from '@/lib/utils'
-import { CheckCircle2, XCircle } from 'lucide-react'
+import { ArrowRight, CheckCircle2, XCircle } from 'lucide-react'
 
 export type QuizQuestion = {
   id: string
@@ -20,9 +20,10 @@ export type QuizQuestion = {
 type QuarterQuizProps = {
   currentQuarter: number
   onRegisterActions?: (actions: { submit: () => void; reset: () => void }) => void
+  setManualStep?: (step: number) => void
 }
 
-export function QuarterQuiz({ currentQuarter, onRegisterActions }: QuarterQuizProps) {
+export function QuarterQuiz({ currentQuarter, onRegisterActions, setManualStep }: QuarterQuizProps) {
   const { gameState, submitQuizResult, saveQuizAnswer, resetQuiz } = useGameState()
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [submitted, setSubmitted] = useState(false)
@@ -34,7 +35,7 @@ export function QuarterQuiz({ currentQuarter, onRegisterActions }: QuarterQuizPr
   const persistedSubmitted = !!quarterData?.quizSubmitted
   const persistedScore = quarterData?.quizScore ?? 0
 
-  const questions: QuizQuestion[] = useMemo(() => buildQuestionsFromEvents(events), [events])
+  const questions: QuizQuestion[] = useMemo(() => buildQuestionsFromEvents(events, gameState.portfolio), [events, gameState.portfolio])
 
   const total = questions.length
   const answered = Object.keys(answers).length
@@ -80,17 +81,20 @@ export function QuarterQuiz({ currentQuarter, onRegisterActions }: QuarterQuizPr
       <CardHeader>
         <CardTitle className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-lg font-semibold">Step 2: Quarter Quiz</span>
+            {/* <span className="text-lg font-semibold">Step 2: Quarter Quiz</span> */}
             {submitted && (
               <Badge variant="outline" className={passed ? 'border-emerald-300 text-emerald-700' : 'border-amber-300 text-amber-700'}>
                 {passed ? 'Passed' : 'Try Again'}
               </Badge>
             )}
           </div>
-          <Badge variant="outline" className="text-xs">Q{currentQuarter}</Badge>
+          {/* <Badge variant="outline" className="text-xs">Q{currentQuarter}</Badge> */}
         </CardTitle>
         <CardDescription>
-          Answer a few questions based on this quarter's events to unlock rebalancing.
+          <span className="font-base text-sm flex items-center gap-1">
+            <span className="text-xl leading-none">🚨</span>
+            <b>NOTE:</b> Use the <b>Market Events</b> panel on the right since questions reflect this quarter's events. <span className="text-xl leading-none">➡️</span>
+          </span>
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -159,7 +163,14 @@ export function QuarterQuiz({ currentQuarter, onRegisterActions }: QuarterQuizPr
             )}
             {submitted && (
               <Button variant="outline" onClick={reset}>Retake</Button>
+
             )}
+            {submitted && (
+              <Button size="sm" onClick={() => setManualStep?.(3)} className="gap-1">
+                Go to step 3 <ArrowRight className="w-4 h-4" />
+              </Button>
+            )}
+
           </div>
         </div>
       </CardContent>
@@ -167,56 +178,167 @@ export function QuarterQuiz({ currentQuarter, onRegisterActions }: QuarterQuizPr
   )
 }
 
-function buildQuestionsFromEvents(events: GameEvent[]): QuizQuestion[] {
+function buildQuestionsFromEvents(events: GameEvent[], portfolio: PortfolioHolding[]): QuizQuestion[] {
   const qs: QuizQuestion[] = []
-  const e1 = events[0]
-  const e2 = events[1]
-  const eTip = events.find(e => e.isUnverifiedTip)
+  const nonTips = events.filter(e => !e.isUnverifiedTip)
+  const macro = nonTips.find(e => ['macro', 'policy', 'commodity', 'geopolitical'].includes(e.type)) || nonTips[0]
+  const earnings = nonTips.find(e => e.type === 'earnings')
+  const tip = events.find(e => e.isUnverifiedTip)
 
-  if (e1) {
+  const SECTOR_POOL = ['Technology', 'Banking', 'Oil & Gas', 'Pharmaceuticals', 'Automobiles', 'Consumer Goods', 'Metals']
+
+  // Helper to get first affected sector or fallback
+  const firstSector = (e?: GameEvent): string => {
+    if (!e) return 'Banking'
+    return e.affectedSectors[0] || 'Banking'
+  }
+
+  // Portfolio analytics
+  const maxStockWeight = portfolio.length ? Math.max(...portfolio.map(h => h.weight)) : 0
+  const sectorWeight: Record<string, number> = {}
+  for (const h of portfolio) {
+    sectorWeight[h.stock.sector] = (sectorWeight[h.stock.sector] || 0) + h.weight
+  }
+  const topSector = Object.keys(sectorWeight).sort((a, b) => (sectorWeight[b] || 0) - (sectorWeight[a] || 0))[0]
+  const topSectorWeight = topSector ? sectorWeight[topSector] : 0
+
+  // Q1: Direction comprehension for key macro/policy event
+  if (macro) {
+    if (macro.direction !== 0) {
+      qs.push({
+        id: `q-dir-${macro.id}`,
+        prompt: `What is the likely price impact direction for: "${macro.title}" event?`,
+        options: [
+          { id: 'pos', label: 'Positive', correct: macro.direction === 1 },
+          { id: 'neg', label: 'Negative', correct: macro.direction === -1 },
+          { id: 'neu', label: 'Neutral', correct: false },
+        ],
+      })
+    } else {
+      // When direction is uncertain, test prudent behavior
+      qs.push({
+        id: `q-uncertain-${macro.id}`,
+        prompt: `Direction for "${macro.title} event" is uncertain. Which approach is most prudent?`,
+        options: [
+          { id: 'concentrate', label: 'Make a concentrated bet to maximize potential upside', correct: false },
+          { id: 'balanced', label: 'Wait for more confirmation; size positions conservatively and stay diversified', correct: true },
+          { id: 'leverage', label: 'Use leverage to amplify returns this quarter', correct: false },
+        ],
+      })
+    }
+  }
+
+  // Q2: Sector impact given the macro/policy event
+  if (macro) {
+    const sec = firstSector(macro)
+    const distractors = SECTOR_POOL.filter(s => s !== sec).slice(0, 2)
+    const prompt = macro.direction === -1
+      ? `Which sector is MOST likely to face near-term pressure from: "${macro.title} event"?`
+      : `Which sector is MOST likely to benefit from: "${macro.title}" event?`
     qs.push({
-      id: `q-dir-${e1.id}`,
-      prompt: `What is the likely price impact direction for: "${e1.title}"?`,
+      id: `q-sector-${macro.id}`,
+      prompt,
       options: [
-        { id: 'pos', label: 'Positive', correct: e1.direction === 1 },
-        { id: 'neg', label: 'Negative', correct: e1.direction === -1 },
-        { id: 'neu', label: 'Neutral', correct: e1.direction === 0 },
+        { id: 's1', label: sec, correct: true },
+        { id: 's2', label: distractors[0] || 'Technology', correct: false },
+        { id: 's3', label: distractors[1] || 'Automobiles', correct: false },
       ],
     })
   }
 
-  if (e2) {
+  // Q3: Shock/decay profile understanding
+  if (macro) {
+    const shockDesc = macro.shockProfile === 'impulse'
+      ? 'Often sharp and fades relatively quickly'
+      : macro.shockProfile === 'step'
+        ? 'Immediate re-pricing that persists for a while'
+        : 'Gradual build-up over time'
     qs.push({
-      id: `q-type-${e2.id}`,
-      prompt: `What type of event is: "${e2.title}"?`,
+      id: `q-shock-${macro.id}`,
+      prompt: `Which description BEST fits the impact profile for "${macro.title}" event (shock: ${macro.shockProfile}, half-life: ${macro.decayHalfLife})?`,
       options: [
-        { id: 'earnings', label: 'Earnings', correct: e2.type === 'earnings' },
-        { id: 'macro', label: 'Macro', correct: e2.type === 'macro' },
-        { id: 'geopolitical', label: 'Geopolitical', correct: e2.type === 'geopolitical' },
-        { id: 'policy', label: 'Policy', correct: e2.type === 'policy' },
-        { id: 'commodity', label: 'Commodity', correct: e2.type === 'commodity' },
-        { id: 'sentiment', label: 'Sentiment', correct: e2.type === 'sentiment' },
+        { id: 'impulse', label: 'Sudden impact that fades relatively quickly', correct: macro.shockProfile === 'impulse' },
+        { id: 'step', label: 'Immediate re-pricing that tends to persist', correct: macro.shockProfile === 'step' },
+        { id: 'ramp', label: 'Gradual impact accumulating over time', correct: macro.shockProfile === 'ramp' },
       ],
     })
   }
 
+  // Q4: Diversification and concentration gotcha (uses portfolio + event)
+  if (macro) {
+    const impactsTopSectorNeg = topSector && macro.direction === -1 && macro.affectedSectors.includes(topSector)
+    const prompt = impactsTopSectorNeg
+      ? `Your portfolio has ~${topSectorWeight.toFixed(0)}% in ${topSector}. "${macro.title}" event likely hurts this sector. What is the MOST prudent action?`
+      : 'Which action aligns BEST with prudent diversification and risk management?'
+    qs.push({
+      id: `q-div-${macro.id}-${topSector || 'none'}`,
+      prompt,
+      options: [
+        { id: 'trim', label: 'Gradually rebalance away from concentration and diversify across sectors', correct: true },
+        { id: 'double', label: 'Double down to average down and recover faster', correct: false },
+        { id: 'allin', label: 'Move 80%+ to a single sector to maximize potential returns', correct: false },
+      ],
+    })
+  }
+
+  // Q5: Earnings nuance (beat/miss vs guidance/valuation)
+  if (earnings) {
+    const isBeat = /Beat/i.test(earnings.title)
+    qs.push({
+      id: `q-earn-${earnings.id}`,
+      prompt: `${earnings.title}. What is the MOST prudent reaction?`,
+      options: [
+        { id: 'chase', label: 'Enter/exit immediately based solely on the headline', correct: false },
+        { id: 'context', label: 'Consider guidance quality, valuation, and position sizing before acting', correct: true },
+        { id: 'rumor', label: 'Rely on social media buzz to decide', correct: false },
+      ],
+    })
+  }
+
+  // Q6: SEBI-aligned behavior for unverified tips or general compliance
   qs.push({
     id: 'q-sebi-tip',
-    prompt: eTip
-      ? 'SEBI-compliant behavior regarding unverified tips is:'
-      : 'Which is a SEBI-compliant investing behavior?',
-    options: eTip
+    prompt: tip ? 'SEBI-compliant behavior regarding unverified tips is:' : 'Which is a SEBI-compliant investing behavior?',
+    options: tip
       ? [
-          { id: 'act', label: 'Act quickly on hot tips to maximize gains', correct: false },
-          { id: 'verify', label: 'Verify information from official sources before acting', correct: true },
-          { id: 'ignore', label: 'Ignore all official sources', correct: false },
-        ]
+        { id: 'act', label: 'Act quickly on hot tips to maximize gains', correct: false },
+        { id: 'verify', label: 'Verify information from official sources before acting', correct: true },
+        { id: 'ignore', label: 'Ignore all official sources', correct: false },
+      ]
       : [
-          { id: 'div', label: 'Diversify across sectors to reduce event impact', correct: true },
-          { id: 'all-in', label: 'Put 80%+ in a single stock for faster returns', correct: false },
-          { id: 'rumors', label: 'Trade based on market rumors', correct: false },
-        ],
+        { id: 'div', label: 'Diversify across sectors to reduce event impact', correct: true },
+        { id: 'all-in', label: 'Put 80%+ in a single stock for faster returns', correct: false },
+        { id: 'rumors', label: 'Trade based on market rumors', correct: false },
+      ],
   })
 
-  return qs.slice(0, 3)
+  // Q7: Confidence weighting (if available)
+  if (macro) {
+    qs.push({
+      id: `q-conf-${macro.id}`,
+      prompt: `This event has ${macro.confidence} confidence. How should that affect your decision-making?`,
+      options: [
+        { id: 'overweight', label: 'Overweight decisions based on this single event', correct: false },
+        { id: 'size', label: 'Use as one input; size positions conservatively when confidence is lower', correct: true },
+        { id: 'ignore', label: 'Ignore risk management because confidence is stated', correct: false },
+      ],
+    })
+  }
+
+  // Q8: Single-stock concentration risk
+  if (maxStockWeight >= 30) {
+    const maxPct = Math.round(maxStockWeight)
+    qs.push({
+      id: `q-concentration-${maxPct}`,
+      prompt: `Your largest single-stock position is ~${maxPct}% of the portfolio. What aligns BEST with prudent risk management?`,
+      options: [
+        { id: 'rebalance', label: 'Rebalance to reduce single-name concentration and diversify', correct: true },
+        { id: 'double', label: 'Increase the position to lower average cost', correct: false },
+        { id: 'ignore', label: 'Ignore concentration as long as the stock is high quality', correct: false },
+      ],
+    })
+  }
+
+  // Cap to 6-7 questions for focus
+  return qs.slice(0, 7)
 }

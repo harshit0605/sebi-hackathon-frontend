@@ -109,9 +109,9 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
             <Link href="/learn/modules">Back to Modules</Link>
           </Button>
         </div>
-        <div className="flex items-start justify-between gap-4">
+        <div className="grid gap-4 lg:grid-cols-[1fr_auto] items-start">
           <div>
-            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{journey.title}</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">{journey.title}</h1>
             <div className="mt-2 flex items-center gap-2 text-xs md:text-sm">
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1">
                 <ShieldCheck className="h-3.5 w-3.5" /> SEBI-aligned curriculum
@@ -125,12 +125,16 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
             ) : null}
             <div className="h-1 w-28 md:w-32 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 mt-4" />
           </div>
-          <div className="text-sm md:text-base text-muted-foreground flex items-center gap-3">
-            <span className="flex items-center gap-1 rounded-full border px-3 py-1 bg-white/50">
-              <BookOpen className="h-4 w-4" /> {lessonCount} lessons
+          <div className="flex flex-wrap items-center gap-2 justify-start lg:justify-end">
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/80 ring-1 ring-emerald-200 px-3 py-1 shadow-sm">
+              <BookOpen className="h-4 w-4 text-emerald-600" />
+              <span className="text-sm md:text-base font-medium">{lessonCount}</span>
+              <span className="text-xs text-muted-foreground">lessons</span>
             </span>
-            <span className="flex items-center gap-1 rounded-full border px-3 py-1 bg-white/50">
-              <Clock className="h-4 w-4" /> ~{derivedHours}h total
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/80 ring-1 ring-sky-200 px-3 py-1 shadow-sm">
+              <Clock className="h-4 w-4 text-sky-600" />
+              <span className="text-sm md:text-base font-medium">~{derivedHours}h</span>
+              <span className="text-xs text-muted-foreground">total</span>
             </span>
           </div>
         </div>
@@ -164,6 +168,35 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
 
           <Card className="rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
+              <CardTitle className="text-lg md:text-xl flex items-center gap-2">
+                <Landmark className="h-5 w-5 text-emerald-600" /> SEBI Recommended Topics
+              </CardTitle>
+              <CardDescription>Aligned to SEBI's Investor Education framework</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {topicTagChips.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {topicTagChips.map((t, i) => (
+                    <Badge
+                      key={`chip-${i}`}
+                      variant="secondary"
+                      className="rounded-full border border-emerald-200/70 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs px-2.5 py-1 shadow-[0_1px_0_rgba(16,185,129,0.15)]"
+                    >
+                      {t}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-sm text-muted-foreground">No topics or tags listed.</div>
+              )}
+              <div className="text-xs text-muted-foreground flex items-center gap-1">
+                <ExternalLink className="h-3.5 w-3.5" /> Reference: <a href="https://www.sebi.gov.in/" target="_blank" rel="noreferrer" className="underline underline-offset-2">sebi.gov.in</a>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* <Card className="rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
+            <CardHeader>
               <CardTitle className="text-lg md:text-xl">Prerequisites</CardTitle>
               <CardDescription>Before you start</CardDescription>
             </CardHeader>
@@ -178,7 +211,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                 <div className="text-sm text-muted-foreground">No prior knowledge required.</div>
               )}
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Course content - Accordion */}
@@ -194,14 +227,11 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
               <CardContent>
                 <Accordion type="multiple" className="w-full">
                   {lessons.map((l) => (
-                    <AccordionItem key={l._id} value={String(l.slug)}>
-                      <AccordionTrigger className="px-2">
+                    <AccordionItem key={l._id} value={String(l.slug)} className="relative">
+                      <AccordionTrigger className="pl-2 pr-32">
                         <div className="grid w-full grid-cols-[1fr_auto] items-center gap-4">
                           <div className="flex flex-col min-h-6 justify-center">
-                            <span className="font-medium leading-tight">{l.title}</span>
-                            {l.subtitle ? (
-                              <span className="text-xs text-muted-foreground leading-tight">{l.subtitle}</span>
-                            ) : null}
+                            <span className="text-base md:text-md font-semibold leading-tight">{l.title}</span>
                           </div>
                           <div className="flex items-center gap-3">
                             <Badge className={difficultyBadge(l.difficulty)}>{l.difficulty}</Badge>
@@ -211,15 +241,24 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                           </div>
                         </div>
                       </AccordionTrigger>
+                      <div className="absolute right-0 top-2">
+                        <Button asChild size="sm" className="rounded-full px-3 py-1 text-xs">
+                          <Link href={`/learn/modules/${journey.slug}/lesson/${l.slug}`}>Start Lesson</Link>
+                        </Button>
+                      </div>
                       <AccordionContent>
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="text-sm text-muted-foreground">
-                            {l.subtitle || 'No additional description'}
-                          </div>
-                          <Button asChild>
-                            <Link href={`/learn/modules/${journey.slug}/lesson/${l.slug}`}>Start Lesson</Link>
-                          </Button>
-                        </div>
+                        {Array.isArray(l.learning_objectives) && l.learning_objectives.length ? (
+                          <ul className="space-y-2">
+                            {l.learning_objectives.map((obj, idx) => (
+                              <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
+                                <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5" />
+                                <span>{obj}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        ) : (
+                          <div className="text-sm text-muted-foreground">{l.subtitle || 'No additional description'}</div>
+                        )}
                       </AccordionContent>
                     </AccordionItem>
                   ))}
@@ -229,34 +268,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
 
             <div className="space-y-6">
               {/* SEBI Recommended Topics */}
-              <Card className="rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
-                <CardHeader>
-                  <CardTitle className="text-lg md:text-xl flex items-center gap-2">
-                    <Landmark className="h-5 w-5 text-emerald-600" /> SEBI Recommended Topics
-                  </CardTitle>
-                  <CardDescription>Aligned to SEBI's Investor Education framework</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {topicTagChips.length ? (
-                    <div className="flex flex-wrap gap-2">
-                      {topicTagChips.map((t, i) => (
-                        <Badge
-                          key={`chip-${i}`}
-                          variant="secondary"
-                          className="rounded-full border border-emerald-200/70 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 text-xs px-2.5 py-1 shadow-[0_1px_0_rgba(16,185,129,0.15)]"
-                        >
-                          {t}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-sm text-muted-foreground">No topics or tags listed.</div>
-                  )}
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    <ExternalLink className="h-3.5 w-3.5" /> Reference: <a href="https://www.sebi.gov.in/" target="_blank" rel="noreferrer" className="underline underline-offset-2">sebi.gov.in</a>
-                  </div>
-                </CardContent>
-              </Card>
+
 
               {/* This course includes */}
               <Card className="rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">

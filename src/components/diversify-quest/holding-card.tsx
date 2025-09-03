@@ -116,24 +116,24 @@ export function HoldingCard({ holding, availableCash, onAdd, onRemove }: Holding
         <div className="mt-3 space-y-3">
           <div className="inline-flex items-center gap-2">
             <div className="inline-flex rounded-lg border bg-white p-1 shadow-sm">
-            <Button
-              type="button"
-              size="sm"
-              variant={mode === 'sell' ? 'default' : 'ghost'}
-              className={cn('h-8 px-3 rounded-md', mode === 'sell' && 'bg-gradient-to-r from-amber-500 to-red-500 text-white')}
-              onClick={() => setMode('sell')}
-            >
-              Sell
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              variant={mode === 'buy' ? 'default' : 'ghost'}
-              className={cn('h-8 px-3 rounded-md', mode === 'buy' && 'bg-gradient-to-r from-emerald-500 to-green-600 text-white')}
-              onClick={() => setMode('buy')}
-            >
-              Buy
-            </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={mode === 'sell' ? 'default' : 'ghost'}
+                className={cn('h-8 px-3 rounded-md', mode === 'sell' && 'bg-gradient-to-r from-amber-500 to-red-500 text-white')}
+                onClick={() => setMode('sell')}
+              >
+                Sell
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={mode === 'buy' ? 'default' : 'ghost'}
+                className={cn('h-8 px-3 rounded-md', mode === 'buy' && 'bg-gradient-to-r from-emerald-500 to-green-600 text-white')}
+                onClick={() => setMode('buy')}
+              >
+                Buy
+              </Button>
             </div>
             <Tooltip>
               <TooltipTrigger aria-label="What does this do?" className="text-gray-500 hover:text-gray-700">
@@ -169,8 +169,8 @@ export function HoldingCard({ holding, availableCash, onAdd, onRemove }: Holding
                   max={100}
                   step={1}
                 />
-                <div className="flex items-center gap-1 mt-1">
-                  {[10,25,50,100].map(p => (
+                <div className="flex items-center gap-1 mt-3">
+                  {[10, 25, 50, 100].map(p => (
                     <Button key={p} type="button" variant="outline" size="sm" className="h-7 px-2"
                       onClick={() => quickSet(p)}>
                       {p}%
@@ -237,7 +237,7 @@ export function HoldingCard({ holding, availableCash, onAdd, onRemove }: Holding
                   step={1}
                 />
                 <div className="flex items-center gap-1 mt-1">
-                  {[10,25,50,100].map(p => (
+                  {[10, 25, 50, 100].map(p => (
                     <Button key={p} type="button" variant="outline" size="sm" className="h-7 px-2 rounded-full"
                       onClick={() => quickSetAdd(p)}>
                       {p}%

@@ -7,8 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import { BookOpen, ChevronRight, FileText, HelpCircle, ListChecks, Sparkles, CheckCircle2, ArrowRight, Globe } from 'lucide-react';
+import { BookOpen, ChevronRight, ChevronLeft, FileText, HelpCircle, ListChecks, Sparkles, CheckCircle2, ArrowRight, Globe } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
+import Link from 'next/link';
 
 // Local storage helpers for quiz attempts
 const quizKey = (lessonSlug: string, blockId: string) => `learn:quiz:${lessonSlug}:${blockId}`;
@@ -110,6 +111,49 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
         }
     }
 
+    // Sidebar style mapping per content type
+    function getTypeStyles(t: ContentBlock['type'], isActive: boolean) {
+        switch (t) {
+            case 'interactive':
+                return {
+                    button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/70 border-emerald-200 shadow-sm' : 'bg-emerald-50/40 hover:bg-emerald-50 border-emerald-200/60'}`,
+                    icon: `${isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-50 text-emerald-700'}`,
+                    chip: { label: 'Interactive', className: 'bg-emerald-100 text-emerald-700' },
+                } as const;
+            case 'quiz':
+                return {
+                    button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 border-violet-200 shadow-sm' : 'bg-violet-50/40 hover:bg-violet-50 border-violet-200/60'}`,
+                    icon: `${isActive ? 'bg-violet-100 text-violet-700' : 'bg-violet-50 text-violet-700'}`,
+                    chip: { label: 'Quiz', className: 'bg-violet-100 text-violet-700' },
+                } as const;
+            case 'concept':
+                return {
+                    button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-blue-50/70 border-blue-200' : 'bg-blue-50/40 hover:bg-blue-50 border-blue-200/60'}`,
+                    icon: `${isActive ? 'bg-blue-100 text-blue-700' : 'bg-blue-50 text-blue-700'}`,
+                } as const;
+            case 'example':
+                return {
+                    button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-amber-50/70 border-amber-200' : 'bg-amber-50/40 hover:bg-amber-50 border-amber-200/60'}`,
+                    icon: `${isActive ? 'bg-amber-100 text-amber-700' : 'bg-amber-50 text-amber-700'}`,
+                } as const;
+            case 'reflection':
+                return {
+                    button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-rose-50/70 border-rose-200' : 'bg-rose-50/40 hover:bg-rose-50 border-rose-200/60'}`,
+                    icon: `${isActive ? 'bg-rose-100 text-rose-700' : 'bg-rose-50 text-rose-700'}`,
+                } as const;
+            case 'callout':
+                return {
+                    button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-sky-50/70 border-sky-200' : 'bg-sky-50/40 hover:bg-sky-50 border-sky-200/60'}`,
+                    icon: `${isActive ? 'bg-sky-100 text-sky-700' : 'bg-sky-50 text-sky-700'}`,
+                } as const;
+            default:
+                return {
+                    button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition-colors ${isActive ? 'bg-gray-50/70 border-gray-200' : 'bg-white hover:bg-gray-50'}`,
+                    icon: `${isActive ? 'bg-gray-100 text-gray-700' : 'bg-gray-100 text-gray-600'}`,
+                } as const;
+        }
+    }
+
     const startQuiz = () => {
         if (selected?.type !== 'quiz') return;
         setAnswers(new Array(selected.payload.items.length).fill(-1));
@@ -154,8 +198,8 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
     const Sidebar = (
         <aside className="w-full sm:w-80 shrink-0 rounded-2xl border bg-white/70 backdrop-blur p-3">
             <div className="px-2 py-2">
-                <div className="text-xs font-semibold text-emerald-700">Lesson</div>
-                <div className="text-sm font-bold leading-tight">{lesson.title}</div>
+                <div className="text-md font-semibold text-emerald-700">Lesson</div>
+                <div className="text-md font-bold leading-tight">{lesson.title}</div>
             </div>
             <div className="max-h-[70vh] overflow-auto pr-1">
                 {menu.map((item, i) => {
@@ -164,14 +208,19 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                     const isQuiz = b?.type === 'quiz';
                     const quizMeta: QuizAttempt | null = isQuiz && b?._id === selected?._id ? attempt : null;
                     const done = isCompleted(b?._id);
+                    const styles = b ? getTypeStyles(b.type, isActive) : undefined;
                     return (
                         <button
                             key={item.id}
                             onClick={() => setSelectedIndex(i)}
-                            className={`group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition-colors ${isActive ? 'bg-emerald-50/70 border-emerald-200' : 'bg-white hover:bg-gray-50'}`}
+                            className={
+                                b
+                                    ? styles!.button
+                                    : `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition-colors ${isActive ? 'bg-emerald-50/70 border-emerald-200' : 'bg-white hover:bg-gray-50'}`
+                            }
                         >
                             <div className="flex items-center gap-3">
-                                <span className={`rounded-md p-1.5 ${isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
+                                <span className={`rounded-md p-1.5 ${b ? styles!.icon : (isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600')}`}>
                                     {item.kind === 'objectives' ? (
                                         <Sparkles className="h-4 w-4" />
                                     ) : done ? (
@@ -193,7 +242,14 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                                     </span>
                                 </div>
                             </div>
-                            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                            <div className="flex items-center gap-2">
+                                {b && (b.type === 'interactive' || b.type === 'quiz') ? (
+                                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${b.type === 'interactive' ? 'bg-emerald-100 text-emerald-700' : 'bg-violet-100 text-violet-700'}`}>
+                                        {b.type === 'interactive' ? 'Interactive' : 'Quiz'}
+                                    </span>
+                                ) : null}
+                                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                            </div>
                         </button>
                     );
                 })}
@@ -205,7 +261,7 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-4 md:gap-6">
             {Sidebar}
             <section className="space-y-4">
-                {/* Removed redundant sticky lesson heading */}
+
                 {/* Objectives panel or block content */}
                 {selectedMenu.kind === 'objectives' ? (
                     <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
@@ -224,37 +280,43 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                     </div>
                 ) : selected ? (
                     selected.type === 'quiz' ? (
-                        <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm">
-                            <CardHeader>
-                                <CardTitle className="text-lg">Quiz</CardTitle>
-                                <CardDescription>
-                                    {selected.payload.items.length} questions • pass at {Math.max(67, selected.payload.pass_threshold ?? 0)}%
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {attempt ? (
-                                    <div className="rounded-lg border p-3 bg-emerald-50/40">
-                                        <div className="text-sm font-medium">Your grade</div>
-                                        <div className="flex items-center justify-between">
-                                            <div className="text-2xl font-bold text-emerald-700">{attempt.last}%</div>
-                                            <div className="text-xs text-muted-foreground">Best: {attempt.best}% • Attempts: {attempt.attempts}</div>
+                        <>
+                            <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm  w-3/4">
+                                <CardHeader>
+                                    <CardTitle className="text-lg">Quiz</CardTitle>
+                                    <CardDescription>
+                                        {selected.payload.items.length} questions • pass at {Math.max(67, selected.payload.pass_threshold ?? 0)}%
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                    {attempt ? (
+                                        <div className="rounded-lg border p-3 bg-emerald-50/40">
+                                            <div className="text-sm font-medium">Your grade</div>
+                                            <div className="flex items-center justify-between">
+                                                <div className="text-2xl font-bold text-emerald-700">{attempt.last}%</div>
+                                                <div className="text-xs text-muted-foreground">Best: {attempt.best}% • Attempts: {attempt.attempts}</div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ) : null}
-                                <Button onClick={startQuiz} className="">{attempt ? 'Retry' : 'Attempt quiz'}</Button>
+                                    ) : null}
+                                    <Button onClick={startQuiz} className="">{attempt ? 'Retry' : 'Attempt quiz'}</Button>
+                                </CardContent>
+                            </Card>
+                            <div className="mt-4">
                                 <ActionBar
                                     onNext={() => setSelectedIndex(Math.min(selectedIndex + 1, menu.length - 1))}
                                     showNext={selectedIndex < menu.length - 1}
-                                    showMark={false}
+                                    showMark={!isCompleted(selected._id)}
+                                    onMark={() => markCompleted(selected._id)}
                                     completed={isCompleted(selected._id)}
                                 />
-                            </CardContent>
-                        </Card>
+                            </div>
+                        </>
                     ) : (
                         <>
                             <ContentRenderer block={selected} anchors={lesson.anchor_details} />
                             <div className="mt-4">
                                 <ActionBar
+
                                     onNext={() => setSelectedIndex(Math.min(selectedIndex + 1, menu.length - 1))}
                                     showNext={selectedIndex < menu.length - 1}
                                     showMark={!isCompleted(selected._id)}
@@ -316,7 +378,7 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
 
 function ObjectivesPanel({ objectives }: { objectives: string[] }) {
     return (
-        <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm">
+        <Card className="backdrop-blur-md bg-gradient-to-br from-white/60 via-emerald-50/40 to-white/60 border-transparent shadow-sm">
             <CardHeader>
                 <CardTitle className="text-lg">Learning objectives</CardTitle>
                 <CardDescription>What you'll achieve</CardDescription>
@@ -325,9 +387,11 @@ function ObjectivesPanel({ objectives }: { objectives: string[] }) {
                 {objectives && objectives.length ? (
                     <ul className="space-y-2">
                         {objectives.map((o, i) => (
-                            <li key={i} className="flex items-start gap-2">
-                                <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5" />
-                                <span className="text-sm">{o}</span>
+                            <li key={i} className="flex items-center gap-3">
+                                <span className="inline-flex h-4 w-4 items-center justify-center shrink-0">
+                                    <CheckCircle2 className="h-4 w-4 text-emerald-600" aria-hidden />
+                                </span>
+                                <span className="text-sm md:text-md">{o}</span>
                             </li>
                         ))}
                     </ul>
@@ -452,7 +516,7 @@ function ActionBar({
     completed?: boolean;
 }) {
     return (
-        <div className="flex items-center justify-end gap-4">
+        <div className="flex items-center justify-end gap-4 w-3/4">
             {showNext ? (
                 <Button onClick={onNext} className="inline-flex items-center gap-2">
                     Go to next item <ArrowRight className="h-4 w-4" />

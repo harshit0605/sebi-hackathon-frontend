@@ -30,12 +30,12 @@ export function PerformanceReview({ onProceed }: { onProceed: () => void }) {
               <span>Portfolio performance review</span>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <Badge variant="outline" className="bg-white/60 border-blue-200 text-blue-700">Step 5</Badge>
+              {/* <Badge variant="outline" className="bg-white/60 border-blue-200 text-blue-700">Step 5</Badge> */}
               <Button
                 variant="secondary"
                 size="sm"
                 onClick={onProceed}
-                className="gap-1"
+                className="gap-1 bg-gradient-to-r from-blue-600 to-emerald-600 text-white"
               >
                 {isFinalQuarter ? 'Finish Quest' : 'Proceed to Next Quarter'}
               </Button>
@@ -67,12 +67,9 @@ export function PerformanceReview({ onProceed }: { onProceed: () => void }) {
               </ul>
             </MetricCard>
           </div>
-
           <div className="rounded-xl border border-gray-200/60 bg-white/70 p-3 shadow-sm">
             <PerformanceChart />
           </div>
-
-          
         </CardContent>
       </Card>
     </div>

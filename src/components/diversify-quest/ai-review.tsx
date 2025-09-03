@@ -31,16 +31,16 @@ export function AIReview({ onProceed }: { onProceed: () => void }) {
   const isFinalQuarter = gameState.currentQuarter >= 12
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <Card className="relative overflow-hidden bg-white/60 backdrop-blur-xl border-white/40 shadow-lg">
-        <CardContent className="space-y-5 p-5">
+        <CardContent className="space-y-6 p-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Wand2 className="w-4 h-4 text-purple-600" />
               <span>AI-generated review</span>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <Badge variant="outline" className="bg-white/60 border-purple-200 text-purple-700">Step 4</Badge>
+              {/* <Badge variant="outline" className="bg-white/60 border-purple-200 text-purple-700">Step 4</Badge> */}
               <Button
                 onClick={onProceed}
                 className="rounded-md bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow hover:from-purple-700 hover:to-blue-700"
@@ -50,7 +50,7 @@ export function AIReview({ onProceed }: { onProceed: () => void }) {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-6">
             <SummaryCard title="Quiz Result" icon={Trophy} accent="emerald">
               <div className="flex items-center justify-between">
                 <div className="text-3xl font-extrabold tracking-tight text-gray-900">{quizScore}%</div>
@@ -62,24 +62,24 @@ export function AIReview({ onProceed }: { onProceed: () => void }) {
             </SummaryCard>
 
             <SummaryCard title="Rebalance Summary" icon={PieChart} accent="blue">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <div className="text-gray-600">Holdings</div>
-                  <div className="font-semibold text-gray-900">{gameState.portfolio.length}</div>
-                </div>
-                <div>
-                  <div className="text-gray-600">Sectors</div>
-                  <div className="font-semibold text-gray-900">{sectorsCount}</div>
-                </div>
-                <div>
-                  <div className="text-gray-600">Max Concentration</div>
-                  <div className={maxConcentration > 25 ? 'font-semibold text-red-600' : 'font-semibold text-gray-900'}>{maxConcentration.toFixed(1)}%</div>
-                </div>
-                <div>
-                  <div className="text-gray-600">Diversification Score</div>
-                  <div className="font-semibold text-gray-900">{diversificationScore.toFixed(0)}</div>
-                </div>
-              </div>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center justify-between">
+                  <span className="text-gray-600 flex items-center gap-1">📦 Holdings</span>
+                  <span className="font-semibold text-gray-900">{gameState.portfolio.length}</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-gray-600 flex items-center gap-1">🏢 Sectors</span>
+                  <span className="font-semibold text-gray-900">{sectorsCount}</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-gray-600 flex items-center gap-1">🎯 Max Concentration</span>
+                  <span className="font-semibold text-gray-900">{maxConcentration.toFixed(1)}%</span>
+                </li>
+                <li className="flex items-center justify-between">
+                  <span className="text-gray-600 flex items-center gap-1">🌐 Diversification Score</span>
+                  <span className="font-semibold text-gray-900">{diversificationScore.toFixed(0)}</span>
+                </li>
+              </ul>
             </SummaryCard>
 
             <SummaryCard title="Risk & Compliance" icon={Shield} accent="purple">
@@ -147,12 +147,12 @@ function SummaryCard({ title, icon: Icon, children, accent = 'blue' }: SummaryCa
   const colors = accentMap[accent]
 
   return (
-    <div className={`relative overflow-hidden rounded-xl border ${colors.border} bg-white/50 backdrop-blur-md shadow-md p-4`}> 
+    <div className={`relative overflow-hidden rounded-xl border ${colors.border} bg-white/50 backdrop-blur-md shadow-md p-4`}>
       <div className={`pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br ${colors.bg}`} />
-      <div className="absolute top-3 right-3 flex items-center gap-1 text-xs px-2 py-1 rounded-full border bg-white/60 text-gray-700">
+      {/* <div className="absolute top-3 right-3 flex items-center gap-1 text-xs px-2 py-1 rounded-full border bg-white/60 text-gray-700">
         <Wand2 className="w-3.5 h-3.5 text-purple-600" />
         AI
-      </div>
+      </div> */}
       <div className="flex items-center gap-2 mb-2">
         <Icon className={`w-4 h-4 ${colors.icon}`} />
         <span className="text-base font-semibold text-gray-800">{title}</span>

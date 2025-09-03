@@ -20,6 +20,7 @@ export type Guide = {
   id: string;
   title?: string;
   source_type: GuideSourceType;
+  cover_image?: string;
   source_url: string;
   summary?: string;
   duration_minutes?: number; // optional total overview minutes
@@ -46,7 +47,7 @@ export const officialGuides: Guide[] = [
           'Understand your rights and obligations as an investor. A concise walkthrough of the official SEBI investor charter.',
         tags: ['SEBI', 'Investor Protection', 'Regulations'],
         mindmap_url: '/guides/mindmaps/investor-charter-en.png',
-        audio_url: '/guides/audio/investor-charter-en.mp3',
+        audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
         video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         study_guide_url: '/guides/study/investor-charter-en.pdf',
       },
@@ -57,7 +58,7 @@ export const officialGuides: Guide[] = [
           'Understand your rights and obligations as an investor. A concise walkthrough of the official SEBI investor charter.',
         tags: ['SEBI', 'Investor Protection', 'Regulations'],
         mindmap_url: '/guides/mindmaps/investor-charter-hi.png',
-        audio_url: '/guides/audio/investor-charter-hi.mp3',
+        audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
         video_url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
         study_guide_url: '/guides/study/investor-charter-hi.pdf',
       },
@@ -79,7 +80,7 @@ export const officialGuides: Guide[] = [
           'A practical introduction to Initial Public Offerings, including application process, allotments and key risks.',
         tags: ['IPO', 'Primary Market'],
         mindmap_url: '/guides/mindmaps/ipo-essentials-en.png',
-        audio_url: '/guides/audio/ipo-essentials-en.mp3',
+        audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
         video_url: 'https://www.youtube.com/watch?v=example-ipo',
         study_guide_url: '/guides/study/ipo-essentials-en.pdf',
       },
@@ -90,7 +91,7 @@ export const officialGuides: Guide[] = [
           'A practical introduction to Initial Public Offerings, including application process, allotments and key risks.',
         tags: ['IPO', 'Primary Market'],
         mindmap_url: '/guides/mindmaps/ipo-essentials-hi.png',
-        audio_url: '/guides/audio/ipo-essentials-hi.mp3',
+        audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
         video_url: 'https://www.youtube.com/watch?v=example-ipo-hi',
         study_guide_url: '/guides/study/ipo-essentials-hi.pdf',
       },
@@ -100,7 +101,7 @@ export const officialGuides: Guide[] = [
     id: 'mutual-fund-beginners',
     title: 'Mutual Funds: A Beginner Guide',
     source_type: 'audio',
-    source_url: '/guides/audio/mutual-funds-overview-en.mp3',
+    source_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
     summary:
       'Key concepts of mutual funds, NAV, expense ratios, SIPs and risk profiling — tailored for first-time investors.',
     tags: ['Mutual Funds', 'SIP'],
@@ -112,7 +113,7 @@ export const officialGuides: Guide[] = [
           'Key concepts of mutual funds, NAV, expense ratios, SIPs and risk profiling — tailored for first-time investors.',
         tags: ['Mutual Funds', 'SIP'],
         mindmap_url: '/guides/mindmaps/mf-beginner-en.png',
-        audio_url: '/guides/audio/mutual-funds-overview-en.mp3',
+        audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
         video_url: 'https://www.youtube.com/watch?v=example-mf',
         study_guide_url: '/guides/study/mf-beginner-en.pdf',
       },
@@ -123,7 +124,7 @@ export const officialGuides: Guide[] = [
           'Key concepts of mutual funds, NAV, expense ratios, SIPs and risk profiling — tailored for first-time investors.',
         tags: ['Mutual Funds', 'SIP'],
         mindmap_url: '/guides/mindmaps/mf-beginner-hi.png',
-        audio_url: '/guides/audio/mutual-funds-overview-hi.mp3',
+        audio_url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
         video_url: 'https://www.youtube.com/watch?v=example-mf-hi',
         study_guide_url: '/guides/study/mf-beginner-hi.pdf',
       },

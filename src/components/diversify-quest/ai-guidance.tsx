@@ -301,8 +301,8 @@ export function AIGuidance({ onUseHint, hintsRemaining, embedded = false, showSe
                     >
                       <div
                         className={`max-w-[80%] p-3 rounded-lg shadow-sm ${message.type === 'user'
-                            ? 'bg-brand-500 text-white'
-                            : 'bg-gray-100 text-gray-900'
+                          ? 'bg-brand-500 text-white'
+                          : 'bg-gray-100 text-gray-900'
                           }`}
                       >
                         <p className="text-sm">{message.content}</p>
@@ -372,7 +372,7 @@ export function AIGuidance({ onUseHint, hintsRemaining, embedded = false, showSe
 
           {/* Contextual Hints */}
           <div className="space-y-3">
-            <h3 className="font-semibold text-sm capitalize">{selectedCategory} Guidance</h3>
+            {/* <h3 className="font-semibold text-sm capitalize">{selectedCategory} Guidance</h3> */}
             {filteredHints.length === 0 ? (
               <div className="text-center py-6 text-gray-500">
                 <CheckCircle className="w-8 h-8 mx-auto mb-2 text-success-500" />
@@ -440,8 +440,8 @@ export function AIGuidance({ onUseHint, hintsRemaining, embedded = false, showSe
                     >
                       <div
                         className={`max-w-[80%] p-3 rounded-lg shadow-sm ${message.type === 'user'
-                            ? 'bg-brand-500 text-white'
-                            : 'bg-gray-100 text-gray-900'
+                          ? 'bg-brand-500 text-white'
+                          : 'bg-gray-100 text-gray-900'
                           }`}
                       >
                         <p className="text-sm">{message.content}</p>
@@ -501,7 +501,7 @@ export function SebiPrinciplesCard() {
 }
 
 function HintCard({ hint }: { hint: Hint }) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case 'high': return 'border-danger-200 bg-danger-50'

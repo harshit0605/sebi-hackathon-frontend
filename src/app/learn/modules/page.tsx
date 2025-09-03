@@ -4,7 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import Link from 'next/link';
-import { BookOpen, Clock } from 'lucide-react';
+import Image from 'next/image';
+import { BookOpen, Clock, ArrowLeft } from 'lucide-react';
 import type { LearningJourney } from '@/lib/learn/types';
 
 function levelBadge(level?: string) {
@@ -17,6 +18,30 @@ function levelBadge(level?: string) {
             return 'bg-red-100 text-red-800';
         default:
             return 'bg-gray-100 text-gray-800';
+    }
+}
+
+// Normalize cover images (Google Drive links -> thumbnail; strip /public; fallback)
+function normalizeCoverImage(src?: string): string {
+    if (!src) return '/guides/sebi-financial-education.jpeg';
+    let url = src;
+    if (url.startsWith('/public/')) url = url.replace(/^\/public/, '');
+    const driveThumb = toGoogleDriveThumbnailUrl(url);
+    return driveThumb || url;
+}
+
+function toGoogleDriveThumbnailUrl(url?: string): string | null {
+    if (!url) return null;
+    try {
+        const u = new URL(url, 'http://x');
+        if (!u.hostname.includes('drive.google.com')) return null;
+        const parts = u.pathname.split('/');
+        const idx = parts.indexOf('d');
+        const id = idx >= 0 && parts[idx + 1] ? parts[idx + 1] : (u.searchParams.get('id') || '');
+        if (!id) return null;
+        return `https://drive.google.com/thumbnail?id=${id}&sz=w1200`;
+    } catch {
+        return null;
     }
 }
 
@@ -46,15 +71,19 @@ export default async function ModulesPage() {
                         </BreadcrumbItem>
                     </BreadcrumbList>
                 </Breadcrumb>
-                <div className="flex items-end justify-between gap-3">
-                    <div>
-                        <h1 className="text-3xl font-bold">Learning Modules</h1>
-                        <p className="text-muted-foreground mt-1">Structured journeys with outcomes, prerequisites, and time estimates.</p>
+                <section className="relative overflow-hidden rounded-2xl p-6 md:p-5 bg-white/30 dark:bg-white/10 backdrop-blur-lg shadow-lg">
+                    <div className="relative z-10 flex items-start justify-between gap-4">
+                        <div className="space-y-2">
+                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">Learning Modules</h1>
+                            <p className="text-muted-foreground">Structured journeys with outcomes, prerequisites, and time estimates.</p>
+                        </div>
+                        <Button asChild variant="ghost" size="sm" className="rounded-full gap-2">
+                            <Link href="/learn"><ArrowLeft className="h-4 w-4" /> Back to Learn</Link>
+                        </Button>
                     </div>
-                    <Button asChild variant="outline">
-                        <Link href="/learn">Back to Learn</Link>
-                    </Button>
-                </div>
+                    <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-gradient-to-br from-brand-100 to-transparent blur-2xl" />
+                    <div className="pointer-events-none absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-gradient-to-tr from-cyan-100 to-transparent blur-2xl" />
+                </section>
 
                 {loadError ? (
                     <Card>
@@ -73,24 +102,30 @@ export default async function ModulesPage() {
                         </CardHeader>
                     </Card>
                 ) : (
-                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
                         {journeys.map((j) => (
-                            <Card key={j._id} className="overflow-hidden hover:shadow-lg transition-shadow">
-                                <div className="aspect-video bg-gradient-to-br from-brand-100 to-brand-200 flex items-center justify-center">
-                                    <BookOpen className="h-12 w-12 text-brand-600" />
-                                </div>
-                                <CardHeader>
-                                    <div className="flex items-start justify-between">
-                                        <div className="space-y-1">
-                                            <CardTitle className="text-lg">{j.title}</CardTitle>
-                                            {j.description ? (
-                                                <CardDescription className="text-sm">{j.description}</CardDescription>
-                                            ) : null}
-                                        </div>
-                                        <Badge className={levelBadge(j.level)}>{j.level ?? 'level'}</Badge>
+                            <Card key={j._id} className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full pt-0">
+                                <div className="relative aspect-video">
+                                    <Image
+                                        src={normalizeCoverImage((j as any).cover_image)}
+                                        alt={j.title}
+                                        fill
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        className="object-cover"
+                                        priority={false}
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-black/0" />
+                                    <div className="absolute right-2 top-2">
+                                        <Badge className="bg-white/80 text-gray-700 border border-brand-200 capitalize">{j.level ?? 'level'}</Badge>
                                     </div>
+                                </div>
+                                <CardHeader className="pb-1">
+                                    <CardTitle className="text-lg line-clamp-2">{j.title}</CardTitle>
+                                    {j.description ? (
+                                        <CardDescription className="text-sm text-muted-foreground line-clamp-4">{j.description}</CardDescription>
+                                    ) : null}
                                 </CardHeader>
-                                <CardContent className="space-y-4">
+                                <CardContent className="mt-auto pt-2 flex flex-col gap-2">
                                     <div className="flex items-center justify-between text-sm text-muted-foreground">
                                         <span className="flex items-center gap-1">
                                             <BookOpen className="h-4 w-4" />

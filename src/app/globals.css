@@ -42,7 +42,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   /* Brand palette (ensures bg-brand-* utilities work in TW v4) */
-  --color-brand-50:  #f0f9ff;
+  --color-brand-50: #f0f9ff;
   --color-brand-100: #e0f2fe;
   --color-brand-200: #bae6fd;
   --color-brand-300: #7dd3fc;
@@ -128,7 +128,19 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+
+  /* Improved Devanagari typography */
+  .font-hindi {
+    font-family: "Noto Sans Devanagari", "Hind", "Mukta", "Nirmala UI", "Mangal", "Kohinoor Devanagari", "Arial Unicode MS", var(--font-sans), system-ui, sans-serif;
+    letter-spacing: 0.1px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }

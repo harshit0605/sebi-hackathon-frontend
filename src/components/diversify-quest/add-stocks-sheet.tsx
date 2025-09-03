@@ -134,7 +134,7 @@ export function AddStocksSheet(props: AddStocksSheetProps) {
                       <div className="font-medium text-sm">{s.symbol} • {s.name}</div>
                       <div className="text-[11px] text-gray-500">₹{s.price.toLocaleString()} • {s.sector}</div>
                     </div>
-                    <Badge variant="outline" className={cn("text-[10px]", isSelected ? "bg-emerald-50 text-emerald-700 border-emerald-300" : "") }>
+                    <Badge variant="outline" className={cn("text-[10px]", isSelected ? "bg-emerald-50 text-emerald-700 border-emerald-300" : "")}>
                       {(batchPct[s.id]?.toFixed?.(0) ?? 0)}% of cash
                     </Badge>
                   </div>
@@ -146,8 +146,8 @@ export function AddStocksSheet(props: AddStocksSheetProps) {
                       </span>
                     </div>
                     <Slider value={[pct]} onValueChange={onPct} min={0} max={100} step={1} className="[&_.range]:bg-gradient-to-r [&_.range]:from-blue-400 [&_.range]:to-emerald-500" />
-                    <div className="flex items-center gap-1 mt-1">
-                      {[10,25,50,100].map(p => (
+                    <div className="flex items-center gap-1 mt-3">
+                      {[10, 25, 50, 100].map(p => (
                         <Button key={p} type="button" variant="outline" size="sm" className="h-7 px-2" onClick={() => quickSet(p)}>
                           {p}%
                         </Button>

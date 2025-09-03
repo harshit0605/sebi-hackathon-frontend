@@ -10,7 +10,7 @@ export default function ReflectionBlock({
   anchors?: Record<string, Anchor>;
 }) {
   return (
-    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm">
+    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm  w-3/4">
       <CardHeader>
         <CardTitle className="text-lg">Reflection</CardTitle>
         {block.payload.guidance_md ? (

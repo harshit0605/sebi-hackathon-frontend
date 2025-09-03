@@ -59,3 +59,42 @@ Tip: If you see no lessons/blocks, verify the linkage above and that `MONGODB_UR
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Performance & Pricing Model (Stakeholder Summary)
+
+This app calculates each quarter’s portfolio performance using two components per stock: a base historical return and an event-driven overlay. These are applied once when you submit a quarter’s rebalance.
+
+- **Base historical return (R_base)**
+  - Deterministic, sector-level return for the quarter.
+  - Small mean-zero range (e.g., ±2–3.5% depending on sector).
+  - Purpose: represent market’s ordinary drift without specific news.
+
+- **Event-driven overlay (Abnormal return, A)**
+  - Built from the quarter’s events (earnings, macro, policy, commodity, geopolitical, sentiment) that target the stock or its sector.
+  - Each event contributes: direction × impact × sensitivity × confidence × shape × decay.
+    - direction: +1 or -1
+    - impact: impactScore/100 (e.g., 25% becomes 0.25)
+    - sensitivity: 1.0 if the stock is directly targeted; 0.4 if only sector-level
+    - confidence: high 1.0, medium 0.75, low 0.5
+    - shape (shockProfile): impulse 0.6, ramp 0.8, step 1.0 (quarter-average weight)
+    - decay (decayHalfLife): quarter-average factor from half-life, 0.25–1.0
+  - Overlay is capped each quarter to ±6% to provide guardrails.
+
+- **Per-stock quarter return and price**
+  - totalReturn_i = R_base(sector_i, q) + clamp_±6%(Σ event terms for i)
+  - newPrice_i = oldPrice_i × (1 + totalReturn_i)
+
+- **Portfolio value and returns**
+  - For each stock: new value = quantity × newPrice.
+  - Portfolio capital = sum of all stock values + cash.
+  - Quarter return (%) = (capital_this_q − capital_prev_q) ÷ capital_prev_q × 100.
+  - Total return (%) = (capital_this_q − startingCapital) ÷ startingCapital × 100.
+
+- **Determinism & fairness**
+  - The same quarter and portfolio produce the same events and base returns (seeded), enabling consistent learning and comparison.
+  - Guardrails (±6% overlay cap) prevent extreme quarter swings from events alone.
+
+- **Notes**
+  - Base returns are small and unbiased; events provide the primary differentiation.
+  - Shock profiles and decay govern how much of an event’s nominal impact shows up within a single quarter.
+  - These effects are applied once per quarter at the time of rebalance submission.

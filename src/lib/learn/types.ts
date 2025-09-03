@@ -7,6 +7,7 @@ export type LearningJourney = {
   slug: string;
   title: string;
   description?: string;
+  cover_image?: string; // URL (can be Google Drive link)
   level?: Level;
   order?: number;
   estimated_hours?: number;

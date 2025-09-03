@@ -40,14 +40,14 @@ export function VerticalQuarterHUD({ currentQuarter, totalQuarters = 12, classNa
           </div>
           <div>
             <p className="text-[12px] text-emerald-700 font-medium">Quarter Journey</p>
-            <p className="text-sm font-semibold text-gray-900">Q{currentQuarter}/{totalQuarters} • Year {year} of 3</p>
+            <p className="text-sm font-semibold text-gray-900">Q{currentQuarter} of {totalQuarters} • Year {year} of 3</p>
           </div>
         </div>
         {/* Completion badge */}
-        <div className="mb-2">
+        <div className=" mt-2">
           <div className="inline-flex items-center gap-1 rounded-full border border-purple-300 bg-purple-50/70 px-3 py-1 text-[11px] font-semibold text-purple-700 shadow-sm">
             <Trophy className="w-3.5 h-3.5" />
-            <span>Complete all quarters to finish your quest</span>
+            <span className="text-xs">Complete all quarters to finish your quest</span>
           </div>
         </div>
 

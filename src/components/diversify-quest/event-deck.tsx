@@ -14,7 +14,7 @@ import {
   AlertTriangle,
   Globe,
   Building2,
-  
+
   DollarSign,
   Calendar,
   Target,
@@ -58,15 +58,16 @@ export function EventDeck({ currentQuarter }: EventDeckProps) {
                 <Calendar className="w-5 h-5 text-brand-500" />
                 Q{currentQuarter} Market Events
               </CardTitle>
-              <CardDescription className="text-gray-600">
+              {/* <CardDescription className="text-gray-600">
                 Key events and market developments affecting this quarter's performance
-              </CardDescription>
+              </CardDescription> */}
             </div>
+
             <div className="ml-2">
               <Button
                 variant="secondary"
                 size="sm"
-                className="gap-1"
+                className="bg-gradient-to-r from-blue-600 to-emerald-600 text-white gap-1"
                 disabled={reviewed}
                 onClick={() => markEventsReviewed(currentQuarter)}
               >
@@ -74,8 +75,18 @@ export function EventDeck({ currentQuarter }: EventDeckProps) {
               </Button>
             </div>
           </div>
+          <CardDescription className="text-gray-600">
+            Key events and market developments affecting this quarter's performance
+          </CardDescription>
         </CardHeader>
         <CardContent>
+          <Alert className="mb-4 border-blue-200 bg-blue-50">
+            <Info className="h-4 w-4 text-blue-700" />
+            <AlertDescription className="text-blue-900 text-sm">
+              Simulated, educational events. Deterministic per quarter and your portfolio. Not investment advice.
+            </AlertDescription>
+          </Alert>
+
           {events.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
               <Calendar className="w-12 h-12 mx-auto mb-4 text-gray-300" />
@@ -137,7 +148,7 @@ function EventCard({
         )}
         onClick={onClick}
       >
-        <CardContent className="p-4">
+        <CardContent className="">
           <div className="flex items-start gap-3">
             <div className={cn(
               "p-2 rounded-lg",
@@ -151,7 +162,7 @@ function EventCard({
 
             <div className="flex-1 min-w-0">
               <div className="flex items-start justify-between gap-2">
-                <h3 className="font-semibold text-base md:text-lg leading-snug text-gray-900">{event.title}</h3>
+                <h3 className="font-semibold text-base md:text-lg leading-snug text-gray-900 break-words">{event.title}</h3>
                 <div className="flex items-center gap-1 flex-shrink-0">
                   {event.isUnverifiedTip && (
                     <Badge variant="outline" className="text-xs uppercase tracking-wide bg-amber-100 text-amber-800 border-amber-300 font-semibold shadow-sm">
@@ -179,21 +190,28 @@ function EventCard({
                 </div>
               </div>
 
-              <p className="text-sm md:text-base text-gray-700 mt-1 line-clamp-2">{event.description}</p>
+              <p className="text-sm md:text-base text-gray-700 mt-1 line-clamp-2 break-words">{event.description}</p>
 
-              <div className="flex flex-wrap items-center gap-4 mt-2">
-                <div className="flex items-center gap-2">
-                  {event.direction === 1 ? (
-                    <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-success-600" />
-                  ) : event.direction === -1 ? (
-                    <TrendingDown className="w-4 h-4 md:w-5 md:h-5 text-danger-600" />
-                  ) : (
-                    <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-gray-400" />
-                  )}
-                  <span className="text-xs md:text-sm font-medium text-gray-700">
-                    Direction: {event.direction === 1 ? 'Positive' : event.direction === -1 ? 'Negative' : 'Neutral'}
-                  </span>
-                </div>
+              <div className="flex flex-wrap items-center gap-x-6 mt-2">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center gap-2 cursor-help">
+                      {event.direction === 1 ? (
+                        <TrendingUp className="w-4 h-4 md:w-5 md:h-5 text-success-600" />
+                      ) : event.direction === -1 ? (
+                        <TrendingDown className="w-4 h-4 md:w-5 md:h-5 text-danger-600" />
+                      ) : (
+                        <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-gray-400" />
+                      )}
+                      <span className="text-xs md:text-sm font-medium text-gray-700">
+                        Direction: {event.direction === 1 ? 'Positive' : event.direction === -1 ? 'Negative' : 'Neutral'}
+                      </span>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent sideOffset={6}>
+                    Expected near-term price impact direction. Not a guarantee; combine with confidence and impact score.
+                  </TooltipContent>
+                </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -207,11 +225,30 @@ function EventCard({
                   </TooltipContent>
                 </Tooltip>
 
+                {/* <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge
+                      variant="outline"
+                      className={cn("text-xs md:text-sm font-semibold capitalize px-2.5 py-1", getConfidenceColor(event.confidence))}
+                    >
+                      Confidence: {event.confidence}
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent sideOffset={6}>
+                    {event.confidence === 'high'
+                      ? 'Based on verified reports and strong data'
+                      : event.confidence === 'medium'
+                        ? 'Based on mixed signals; moderate certainty'
+                        : 'Low reliability; treat cautiously'}
+                  </TooltipContent>
+                </Tooltip> */}
+
                 <div className="text-xs md:text-sm text-gray-600">
                   {event.affectedSectors.length > 0 && (
                     <span>Likely affected sectors: {event.affectedSectors.slice(0, 2).join(', ')}{event.affectedSectors.length > 2 ? '…' : ''}</span>
                   )}
                 </div>
+
               </div>
             </div>
           </div>
@@ -382,8 +419,8 @@ export function UnderstandingMarketEventsCard() {
         <CardDescription className="text-gray-600">Learn what each signal means and how to interpret it.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8 md:divide-x divide-gray-100">
-          <div className="space-y-4">
+        <div className="space-y-8">
+          <div className="space-y-4 break-words">
             <h4 className="font-semibold text-sm md:text-base text-gray-900">Event Types</h4>
             <div className="space-y-2.5 text-sm md:text-[15px]">
               <div className="flex items-center gap-2.5">
@@ -405,7 +442,7 @@ export function UnderstandingMarketEventsCard() {
             </div>
           </div>
 
-          <div className="space-y-4 pl-0 md:pl-6">
+          <div className="space-y-4 break-words">
             <h4 className="font-semibold text-sm md:text-base text-gray-900">How to read an event</h4>
             <div className="space-y-2.5 text-sm text-gray-700">
               <div className="flex items-center gap-3">

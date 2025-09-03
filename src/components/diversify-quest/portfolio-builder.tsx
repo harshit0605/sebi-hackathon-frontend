@@ -217,8 +217,28 @@ export function PortfolioBuilder({ onRebalance, onProceed, onRegisterActions }: 
                 <Badge variant="secondary" className="text-xs rounded-full bg-blue-50 text-blue-700">
                   Invested: ₹{(totalPortfolioValue / 100000).toFixed(1)}L
                 </Badge>
-                <Button size="sm" variant="outline" onClick={handleSkip} className="border-slate-300 text-slate-700">
+                {/* <Button size="sm" variant="outline" onClick={handleSkip} className="border-slate-300 text-slate-700 ml-5">
                   Skip
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSubmit}
+                  disabled={tempPortfolio.length === 0}
+                  className="rounded-md bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow hover:from-purple-700 hover:to-blue-700"
+                >
+                  Submit Rebalance
+                </Button> */}
+              </div>
+            </CardTitle>
+            <CardDescription className="text-gray-600"><span className="font-base text-sm flex items-center gap-1 mt-1">
+              <span className="text-xl leading-none">🚨</span>
+              <b>NOTE:</b> Use the <b>Market Events</b> panel on the right since questions reflect this quarter's events. <span className="text-xl leading-none">➡️</span>
+            </span></CardDescription>
+            <div className="mt-6 flex items-center justify-between">
+              <Button size="sm" className="rounded-md text-white " onClick={() => setAddSheetOpen(true)}>Add Stocks</Button>
+              <div>
+                <Button size="sm" variant="outline" onClick={handleSkip} className="border-slate-300 text-slate-700 mr-5">
+                  Skip rebalance
                 </Button>
                 <Button
                   size="sm"
@@ -229,8 +249,7 @@ export function PortfolioBuilder({ onRebalance, onProceed, onRegisterActions }: 
                   Submit Rebalance
                 </Button>
               </div>
-            </CardTitle>
-            <CardDescription className="text-gray-600">Manage and rebalance your positions</CardDescription>
+            </div>
           </CardHeader>
           <CardContent>
             <ScrollArea className="h-[30rem]">
@@ -253,10 +272,22 @@ export function PortfolioBuilder({ onRebalance, onProceed, onRegisterActions }: 
                 </div>
               )}
             </ScrollArea>
-            <div className="mt-4 flex items-center justify-between">
-              <Button size="sm" className="rounded-md bg-slate-900 text-white hover:bg-slate-800" onClick={() => setAddSheetOpen(true)}>Add Stocks</Button>
-              <div />
-            </div>
+            {/* <div className="mt-4 flex items-center justify-between">
+              <Button size="sm" className="rounded-md text-white " onClick={() => setAddSheetOpen(true)}>Add Stocks</Button>
+              <div>
+                <Button size="sm" variant="outline" onClick={handleSkip} className="border-slate-300 text-slate-700 mr-5">
+                  Skip rebalance
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={handleSubmit}
+                  disabled={tempPortfolio.length === 0}
+                  className="rounded-md bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow hover:from-purple-700 hover:to-blue-700"
+                >
+                  Submit Rebalance
+                </Button>
+              </div>
+            </div> */}
           </CardContent>
         </Card>
       </div>

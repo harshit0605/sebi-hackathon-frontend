@@ -11,7 +11,7 @@ export default function ConceptBlock({
 }) {
   const aCount = block.anchor_ids?.length ?? 0;
   return (
-    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm">
+    <Card className="w-3/4 backdrop-blur bg-white/60 border-white/50 shadow-sm">
       <CardHeader>
         <CardTitle className="text-lg">{block.payload.heading}</CardTitle>
         {aCount > 0 ? (

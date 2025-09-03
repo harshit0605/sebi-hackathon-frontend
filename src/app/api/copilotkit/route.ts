@@ -13,9 +13,9 @@ const serviceAdapter = new OpenAIAdapter();
 const runtime = new CopilotRuntime({
   agents: {
     'chunking_orchestrator': new LangGraphAgent({
-      deploymentUrl: 'https://smith.langchain.com/studio/thread?baseUrl=http%3A%2F%2Flocalhost%3A8000&organizationId=83f8c13e-1636-5f75-a67f-57ddf9673bb2&mode=graph&render=interact&assistantId=eccfbd69-f697-503c-97dc-2fa05506dda2',
+      deploymentUrl: 'http://localhost:8000',
       graphId: '',
-      langsmithApiKey: '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',
+      langsmithApiKey: process.env.LANGCHAIN_API_KEY,
     }),
   },
   actions: [
@@ -149,13 +149,13 @@ const runtime = new CopilotRuntime({
 export async function POST(req: NextRequest) {
   // Check authentication
   try {
-    const session = await auth.api.getSession({
-      headers: req.headers,
-    });
+    // const session = await auth.api.getSession({
+    //   headers: req.headers,
+    // });
 
-    if (!session) {
-      return new Response('Unauthorized', { status: 401 });
-    }
+    // if (!session) {
+    //   return new Response('Unauthorized', { status: 401 });
+    // }
 
     const {handleRequest} = copilotRuntimeNextJSAppRouterEndpoint({
       runtime,

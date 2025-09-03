@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
     '/sign-in',
     '/sign-up',
     '/api/auth',
-    '/api/copilot',
+    '/api/copilotkit',
     '/_next',
     '/favicon.ico',
   ];

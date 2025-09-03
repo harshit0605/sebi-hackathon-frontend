@@ -1,7 +1,7 @@
 import { MainLayout } from '@/components/layout/main-layout';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Clock } from 'lucide-react';
+import { ChevronLeft, Clock } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import LessonViewer from '@/components/learn/lesson-viewer';
 import type { Lesson, ContentBlock, Anchor } from '@/lib/learn/types';
@@ -106,14 +106,16 @@ export default async function LessonPage({ params }: { params: Promise<{ journey
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <Button asChild variant="outline">
-            <Link href={`/learn/modules/${journeySlug}`}>Back to Journey</Link>
-          </Button>
+          <Link href={`/learn/modules/${journeySlug}`} className="inline-flex">
+            <Button className="rounded-full bg-white/40 hover:bg-white/60 text-emerald-800 border border-white/60 backdrop-blur px-3 py-1 h-8">
+              <ChevronLeft className="h-4 w-4 mr-1" /> Back to Journey
+            </Button>
+          </Link>
         </div>
-        <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-r from-emerald-50 to-cyan-50 p-6 md:p-8">
+        <section className="rounded-2xl border border-transparent bg-gradient-to-r from-emerald-50/70 via-teal-50/50 to-cyan-50/70 backdrop-blur-md p-5 shadow-sm">
           <div className="relative z-10 flex items-start justify-between gap-4">
             <div>
-              <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{lesson.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-black tracking-tight">{lesson.title}</h1>
               {lesson.subtitle ? (
                 <p className="text-muted-foreground mt-2 max-w-3xl text-sm md:text-base">{lesson.subtitle}</p>
               ) : null}

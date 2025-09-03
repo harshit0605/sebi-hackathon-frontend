@@ -11,7 +11,7 @@ export default function ExampleBlock({
   anchors?: Record<string, Anchor>;
 }) {
   return (
-    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm">
+    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm w-3/4">
       <CardHeader>
         <CardTitle className="text-lg">{block.payload.scenario_title}</CardTitle>
         {block.payload.qa_pairs?.length ? (
@@ -28,10 +28,17 @@ export default function ExampleBlock({
               {block.payload.qa_pairs.map((qa, i) => (
                 <AccordionItem key={i} value={`qa-${i}`}>
                   <AccordionTrigger className="px-3">
-                    <span className="font-medium">Q{i + 1}: {qa.question}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-muted-foreground">Q{i + 1}:</span>
+                      <Markdown className="prose prose-sm max-w-none">
+                        {qa.question}
+                      </Markdown>
+                    </div>
                   </AccordionTrigger>
                   <AccordionContent className="px-3 text-muted-foreground">
-                    <span className="block">A: {qa.answer}</span>
+                    <Markdown className="prose prose-sm max-w-none">
+                      {qa.answer}
+                    </Markdown>
                   </AccordionContent>
                 </AccordionItem>
               ))}

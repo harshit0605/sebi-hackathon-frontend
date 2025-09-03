@@ -73,12 +73,12 @@ export default function DiversifyQuestPage() {
   const derivedStep = !eventsReviewed
     ? 1
     : !quizPassed
-    ? 2
-    : !rebalanced
-    ? 3
-    : !aiReviewed
-    ? 4
-    : 5
+      ? 2
+      : !rebalanced
+        ? 3
+        : !aiReviewed
+          ? 4
+          : 5
   const [manualStep, setManualStep] = useState<number | null>(null)
   const stepToShow = manualStep ?? derivedStep
 
@@ -99,8 +99,8 @@ export default function DiversifyQuestPage() {
         {/* Animated background elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-r from-emerald-400/10 to-blue-400/10 rounded-full filter blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full filter blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-400/5 to-pink-400/5 rounded-full filter blur-3xl animate-pulse" style={{animationDelay: '4s'}}></div>
+          <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-400/5 to-pink-400/5 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '4s' }}></div>
         </div>
         <div className="max-w-6xl mx-auto relative z-10">
           {/* Hero */}
@@ -139,57 +139,77 @@ export default function DiversifyQuestPage() {
                 <h2 className="text-xl font-semibold text-gray-900">How the game flows</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                <div className="rounded-xl border border-blue-100 p-4 bg-blue-50/50">
-                  <div className="flex items-center gap-2 mb-1"><Calendar className="w-4 h-4 text-blue-600" /><span className="font-medium">Review Events</span></div>
-                  <p className="text-sm text-gray-700">Understand macro, earnings, policy and more.</p>
+                <div className="rounded-xl border border-blue-100 p-3 bg-blue-50/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-blue-600 rounded-full">1</span>
+                    <Calendar className="w-4 h-4 text-blue-600" />
+                    <span className="font-medium">Review Events</span>
+                  </div>
+                  <p className="text-sm text-gray-700">Scan the quarter’s headlines: economy, company news, policy and more.</p>
                 </div>
-                <div className="rounded-xl border border-amber-100 p-4 bg-amber-50/50">
-                  <div className="flex items-center gap-2 mb-1"><BookOpen className="w-4 h-4 text-amber-600" /><span className="font-medium">Pass Quiz</span></div>
-                  <p className="text-sm text-gray-700">Instant, dynamic questions to unlock Step 3.</p>
+                <div className="rounded-xl border border-amber-100 p-3 bg-amber-50/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-amber-600 rounded-full">2</span>
+                    <BookOpen className="w-4 h-4 text-amber-600" />
+                    <span className="font-medium">Pass Quiz</span>
+                  </div>
+                  <p className="text-sm text-gray-700">Answer a few quick questions to unlock Step 3.</p>
                 </div>
-                <div className="rounded-xl border border-emerald-100 p-4 bg-emerald-50/50">
-                  <div className="flex items-center gap-2 mb-1"><PieChart className="w-4 h-4 text-emerald-600" /><span className="font-medium">Rebalance</span></div>
-                  <p className="text-sm text-gray-700">Buy/sell whole shares; manage risk & weights.</p>
+                <div className="rounded-xl border border-emerald-100 p-3 bg-emerald-50/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-emerald-600 rounded-full">3</span>
+                    <PieChart className="w-4 h-4 text-emerald-600" />
+                    <span className="font-medium">Rebalance</span>
+                  </div>
+                  <p className="text-sm text-gray-700">Buy or sell whole shares. Manage risk and weights.</p>
                 </div>
-                <div className="rounded-xl border border-purple-100 p-4 bg-purple-50/50">
-                  <div className="flex items-center gap-2 mb-1"><Lightbulb className="w-4 h-4 text-purple-600" /><span className="font-medium">AI Review</span></div>
-                  <p className="text-sm text-gray-700">Critique diversification, exposure and intent.</p>
+                <div className="rounded-xl border border-purple-100 p-3 bg-purple-50/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-purple-600 rounded-full">4</span>
+                    <Lightbulb className="w-4 h-4 text-purple-600" />
+                    <span className="font-medium">AI Review</span>
+                  </div>
+                  <p className="text-sm text-gray-700">Get a clear critique of diversification, exposure and intent.</p>
                 </div>
-                <div className="rounded-xl border border-sky-100 p-4 bg-sky-50/50">
-                  <div className="flex items-center gap-2 mb-1"><Activity className="w-4 h-4 text-sky-600" /><span className="font-medium">Performance</span></div>
-                  <p className="text-sm text-gray-700">See quarter returns and proceed to the next Q.</p>
+                <div className="rounded-xl border border-sky-100 p-3 bg-sky-50/50">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold text-white bg-sky-600 rounded-full">5</span>
+                    <Activity className="w-4 h-4 text-sky-600" />
+                    <span className="font-medium">Performance</span>
+                  </div>
+                  <p className="text-sm text-gray-700">See your quarter results and move to the next Q.</p>
                 </div>
               </div>
             </section>
 
             {/* AI Highlights */}
-            <div className="grid md:grid-cols-4 gap-4 mb-10">
+            <div className="grid md:grid-cols-4 gap-3 mb-8">
               <Card className="border-2 border-emerald-200">
-                <CardHeader>
-                  <Lightbulb className="w-7 h-7 text-emerald-600" />
-                  <CardTitle>AI help in every step</CardTitle>
-                  <CardDescription className="text-gray-700">Hints, tooltips and contextual guidance without giving stock tips.</CardDescription>
+                <CardHeader className="py-3">
+                  <Lightbulb className="w-6 h-6 text-emerald-600" />
+                  <CardTitle className="text-base">AI help in every step</CardTitle>
+                  <CardDescription className="text-gray-700 text-sm">Hints, tooltips and contextual guidance without giving stock tips.</CardDescription>
                 </CardHeader>
               </Card>
               <Card className="border-2 border-amber-200">
-                <CardHeader>
-                  <BookOpen className="w-7 h-7 text-amber-600" />
-                  <CardTitle>Instant, dynamic quizzes</CardTitle>
-                  <CardDescription className="text-gray-700">Generated from current quarter events to test understanding.</CardDescription>
+                <CardHeader className="py-3">
+                  <BookOpen className="w-6 h-6 text-amber-600" />
+                  <CardTitle className="text-base">Instant, dynamic quizzes</CardTitle>
+                  <CardDescription className="text-gray-700 text-sm">Generated from current quarter events to test understanding.</CardDescription>
                 </CardHeader>
               </Card>
               <Card className="border-2 border-purple-200">
-                <CardHeader>
-                  <Target className="w-7 h-7 text-purple-600" />
-                  <CardTitle>AI quarter review</CardTitle>
-                  <CardDescription className="text-gray-700">Critiques rebalancing decisions and highlights risks.</CardDescription>
+                <CardHeader className="py-3">
+                  <Target className="w-6 h-6 text-purple-600" />
+                  <CardTitle className="text-base">AI quarter review</CardTitle>
+                  <CardDescription className="text-gray-700 text-sm">Critiques rebalancing decisions and highlights risks.</CardDescription>
                 </CardHeader>
               </Card>
               <Card className="border-2 border-blue-200">
-                <CardHeader>
-                  <Zap className="w-7 h-7 text-blue-600" />
-                  <CardTitle>SEBI-aligned guidance</CardTitle>
-                  <CardDescription className="text-gray-700">Education-focused, compliant insights—not recommendations.</CardDescription>
+                <CardHeader className="py-3">
+                  <Zap className="w-6 h-6 text-blue-600" />
+                  <CardTitle className="text-base">SEBI-aligned guidance</CardTitle>
+                  <CardDescription className="text-gray-700 text-sm">Education-focused, compliant insights—not recommendations.</CardDescription>
                 </CardHeader>
               </Card>
             </div>
@@ -199,49 +219,49 @@ export default function DiversifyQuestPage() {
               <div className="mb-3">
                 <p className="text-xs uppercase tracking-wider text-gray-500">Core mechanics</p>
                 <h2 className="text-xl font-semibold text-gray-900">Game mechanics at a glance</h2>
-                <p className="text-sm text-gray-600">Understand how returns are computed, how events move markets, and what unlocks each step.</p>
+                <p className="text-sm text-gray-600">Here’s the simple version: what moves prices and what you need to do.</p>
               </div>
-              <div className="grid md:grid-cols-3 gap-4">
-                <div className="flex items-start gap-3 p-4 rounded-xl border bg-white/60">
-                  <div className="mt-0.5"><Percent className="w-5 h-5 text-emerald-600" /></div>
+              <div className="grid md:grid-cols-3 gap-3">
+                <div className="flex items-start gap-3 p-3 rounded-xl border bg-white/60">
+                  <div className="mt-0.5"><Percent className="w-4 h-4 text-emerald-600" /></div>
                   <div>
                     <h3 className="font-medium text-gray-900">Returns</h3>
-                    <p className="text-sm text-gray-700">Quarter Return = ((Vq − Vq-1) / Vq-1) × 100. Total return tracks growth from starting capital.</p>
+                    <p className="text-sm text-gray-700">Your portfolio goes up or down each quarter based on your mix of stocks and cash. Total return shows how far you’ve come since you started.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-4 rounded-xl border bg-white/60">
-                  <div className="mt-0.5"><Activity className="w-5 h-5 text-blue-600" /></div>
+                <div className="flex items-start gap-3 p-3 rounded-xl border bg-white/60">
+                  <div className="mt-0.5"><Activity className="w-4 h-4 text-blue-600" /></div>
                   <div>
                     <h3 className="font-medium text-gray-900">Event impact</h3>
-                    <p className="text-sm text-gray-700">Events have direction and impact scores with a shock/decay profile that flows into sectors and stocks.</p>
+                    <p className="text-sm text-gray-700">Each quarter, markets gently drift by sector. News adds a nudge up or down. Big news hits fast then fades over time. We keep moves within a sensible range.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-4 rounded-xl border bg-white/60">
-                  <div className="mt-0.5"><BookOpen className="w-5 h-5 text-amber-600" /></div>
+                <div className="flex items-start gap-3 p-3 rounded-xl border bg-white/60">
+                  <div className="mt-0.5"><BookOpen className="w-4 h-4 text-amber-600" /></div>
                   <div>
                     <h3 className="font-medium text-gray-900">Quiz gating</h3>
-                    <p className="text-sm text-gray-700">Pass a short, dynamic quiz based on events to unlock rebalancing each quarter.</p>
+                    <p className="text-sm text-gray-700">Pass a short, dynamic quiz about this quarter’s news to unlock rebalancing.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-4 rounded-xl border bg-white/60">
-                  <div className="mt-0.5"><Coins className="w-5 h-5 text-purple-600" /></div>
+                <div className="flex items-start gap-3 p-3 rounded-xl border bg-white/60">
+                  <div className="mt-0.5"><Coins className="w-4 h-4 text-purple-600" /></div>
                   <div>
                     <h3 className="font-medium text-gray-900">Trading constraints</h3>
-                    <p className="text-sm text-gray-700">Trade whole shares; cash must remain non‑negative. No leverage. AI flags risky actions.</p>
+                    <p className="text-sm text-gray-700">Trade whole shares only. Keep cash non‑negative. No leverage. AI flags risky moves.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-4 rounded-xl border bg-white/60">
-                  <div className="mt-0.5"><ShieldCheck className="w-5 h-5 text-indigo-600" /></div>
+                <div className="flex items-start gap-3 p-3 rounded-xl border bg-white/60">
+                  <div className="mt-0.5"><ShieldCheck className="w-4 h-4 text-indigo-600" /></div>
                   <div>
                     <h3 className="font-medium text-gray-900">Diversification</h3>
-                    <p className="text-sm text-gray-700">Watch concentration and sector exposure. AI highlights imbalance and suggests safer mixes.</p>
+                    <p className="text-sm text-gray-700">Avoid putting too much in one stock or sector. The AI highlights imbalances and suggests safer mixes.</p>
                   </div>
                 </div>
-                <div className="flex items-start gap-3 p-4 rounded-xl border bg-white/60">
-                  <div className="mt-0.5"><Calendar className="w-5 h-5 text-sky-600" /></div>
+                <div className="flex items-start gap-3 p-3 rounded-xl border bg-white/60">
+                  <div className="mt-0.5"><Calendar className="w-4 h-4 text-sky-600" /></div>
                   <div>
                     <h3 className="font-medium text-gray-900">Progression</h3>
-                    <p className="text-sm text-gray-700">Play through 12 quarters, compounding decisions and performance along the way.</p>
+                    <p className="text-sm text-gray-700">Play through 12 quarters, compounding your choices along the way.</p>
                   </div>
                 </div>
               </div>
@@ -283,7 +303,7 @@ export default function DiversifyQuestPage() {
       {/* Animated background elements */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-20 right-20 w-64 h-64 bg-gradient-to-r from-emerald-500/8 to-blue-500/8 rounded-full filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-r from-blue-500/8 to-purple-500/8 rounded-full filter blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute bottom-20 left-20 w-64 h-64 bg-gradient-to-r from-blue-500/8 to-purple-500/8 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 p-4 pb-20">
@@ -292,7 +312,7 @@ export default function DiversifyQuestPage() {
         {/* Removed top-level QuarterHUD (redundant with Vertical HUD) */}
 
         {/* Portfolio Overview - full width on top; sticky for constant visibility */}
-        <div className="mt-4 sticky top-2 z-30">
+        <div className="mt-4 top-6 z-30">
           <Card className="bg-white/80 backdrop-blur-xl border-brand-200 shadow-2xl">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-gray-900">
@@ -312,7 +332,7 @@ export default function DiversifyQuestPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4 mb-5">
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
                 <div className="text-center p-4 bg-gradient-to-br from-emerald-500/10 to-emerald-600/10 rounded-xl border border-emerald-400/20">
                   <div className="text-2xl font-bold text-emerald-500">₹{(invested / 100000).toFixed(1)}L</div>
                   <div className="text-sm text-gray-600 font-medium">Invested</div>
@@ -340,7 +360,7 @@ export default function DiversifyQuestPage() {
               </div>
 
               {/* Attention-grabbing risk alerts */}
-              <div className="space-y-2">
+              <div className="space-x-2 mt-3 grid grid-cols-2 gap-3">
                 {concentrationRisk > 25 && (
                   <Alert className="border-l-4 border-red-400 bg-red-50/90">
                     <AlertTriangle className="h-4 w-4 text-red-600" />
@@ -411,22 +431,22 @@ export default function DiversifyQuestPage() {
                         aria-disabled={2 > derivedStep}
                         className={`relative z-10 flex items-center gap-3 px-4 py-2.5 rounded-2xl border-2 bg-white/80 shadow-sm hover:shadow-md transition-all ${quizPassed ? 'border-emerald-200' : stepToShow === 2 ? 'border-amber-200' : 'border-gray-200'} ${2 > derivedStep ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
-                    <div className="absolute top-1.5 right-1.5">
-                      {quizPassed ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-600" />
-                      ) : stepToShow === 2 ? (
-                        <Clock className="w-4 h-4 text-amber-600" />
-                      ) : eventsReviewed ? (
-                        <Clock className="w-4 h-4 text-gray-400" />
-                      ) : (
-                        <Lock className="w-4 h-4 text-gray-300" />
-                      )}
-                    </div>
-                    <BookOpen className={`w-4 h-4 ${quizPassed ? 'text-emerald-600' : stepToShow === 2 ? 'text-amber-600' : 'text-gray-400'}`} />
-                    <div className="text-sm">
-                      <div className="font-medium text-gray-800">Pass Quiz</div>
-                      <div className="text-xs text-gray-600">Unlock rebalancing</div>
-                    </div>
+                        <div className="absolute top-1.5 right-1.5">
+                          {quizPassed ? (
+                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                          ) : stepToShow === 2 ? (
+                            <Clock className="w-4 h-4 text-amber-600" />
+                          ) : eventsReviewed ? (
+                            <Clock className="w-4 h-4 text-gray-400" />
+                          ) : (
+                            <Lock className="w-4 h-4 text-gray-300" />
+                          )}
+                        </div>
+                        <BookOpen className={`w-4 h-4 ${quizPassed ? 'text-emerald-600' : stepToShow === 2 ? 'text-amber-600' : 'text-gray-400'}`} />
+                        <div className="text-sm">
+                          <div className="font-medium text-gray-800">Pass Quiz</div>
+                          <div className="text-xs text-gray-600">Unlock rebalancing</div>
+                        </div>
                       </button>
                     </TooltipTrigger>
                     {2 > derivedStep && (
@@ -449,22 +469,22 @@ export default function DiversifyQuestPage() {
                         aria-disabled={3 > derivedStep}
                         className={`relative z-10 flex items-center gap-3 px-4 py-2.5 rounded-2xl border-2 bg-white/80 shadow-sm hover:shadow-md transition-all ${rebalanced ? 'border-emerald-200' : stepToShow === 3 ? 'border-amber-200' : 'border-gray-200'} ${3 > derivedStep ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
-                    <div className="absolute top-1.5 right-1.5">
-                      {rebalanced ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-600" />
-                      ) : stepToShow === 3 ? (
-                        <Clock className="w-4 h-4 text-amber-600" />
-                      ) : quizPassed ? (
-                        <Clock className="w-4 h-4 text-gray-400" />
-                      ) : (
-                        <Lock className="w-4 h-4 text-gray-300" />
-                      )}
-                    </div>
-                    <TrendingUp className={`w-4 h-4 ${rebalanced ? 'text-emerald-600' : stepToShow === 3 ? 'text-amber-600' : 'text-gray-400'}`} />
-                    <div className="text-sm">
-                      <div className="font-medium text-gray-800">Rebalance</div>
-                      <div className="text-xs text-gray-600">Adjust holdings</div>
-                    </div>
+                        <div className="absolute top-1.5 right-1.5">
+                          {rebalanced ? (
+                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                          ) : stepToShow === 3 ? (
+                            <Clock className="w-4 h-4 text-amber-600" />
+                          ) : quizPassed ? (
+                            <Clock className="w-4 h-4 text-gray-400" />
+                          ) : (
+                            <Lock className="w-4 h-4 text-gray-300" />
+                          )}
+                        </div>
+                        <TrendingUp className={`w-4 h-4 ${rebalanced ? 'text-emerald-600' : stepToShow === 3 ? 'text-amber-600' : 'text-gray-400'}`} />
+                        <div className="text-sm">
+                          <div className="font-medium text-gray-800">Rebalance</div>
+                          <div className="text-xs text-gray-600">Adjust holdings</div>
+                        </div>
                       </button>
                     </TooltipTrigger>
                     {3 > derivedStep && (
@@ -487,22 +507,22 @@ export default function DiversifyQuestPage() {
                         aria-disabled={4 > derivedStep}
                         className={`relative z-10 flex items-center gap-3 px-4 py-2.5 rounded-2xl border-2 bg-white/80 shadow-sm hover:shadow-md transition-all ${stepToShow === 4 ? 'border-amber-200' : aiReviewed ? 'border-emerald-200' : 'border-gray-200'} ${4 > derivedStep ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
-                    <div className="absolute top-1.5 right-1.5">
-                      {aiReviewed ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-600" />
-                      ) : stepToShow === 4 ? (
-                        <Clock className="w-4 h-4 text-amber-600" />
-                      ) : rebalanced ? (
-                        <Clock className="w-4 h-4 text-gray-400" />
-                      ) : (
-                        <Lock className="w-4 h-4 text-gray-300" />
-                      )}
-                    </div>
-                    <PieChart className={`w-4 h-4 ${stepToShow === 4 ? 'text-amber-600' : aiReviewed ? 'text-emerald-600' : 'text-gray-400'}`} />
-                    <div className="text-sm">
-                      <div className="font-medium text-gray-800">AI Review</div>
-                      <div className="text-xs text-gray-600">Summary insights</div>
-                    </div>
+                        <div className="absolute top-1.5 right-1.5">
+                          {aiReviewed ? (
+                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                          ) : stepToShow === 4 ? (
+                            <Clock className="w-4 h-4 text-amber-600" />
+                          ) : rebalanced ? (
+                            <Clock className="w-4 h-4 text-gray-400" />
+                          ) : (
+                            <Lock className="w-4 h-4 text-gray-300" />
+                          )}
+                        </div>
+                        <PieChart className={`w-4 h-4 ${stepToShow === 4 ? 'text-amber-600' : aiReviewed ? 'text-emerald-600' : 'text-gray-400'}`} />
+                        <div className="text-sm">
+                          <div className="font-medium text-gray-800">AI Review</div>
+                          <div className="text-xs text-gray-600">Summary insights</div>
+                        </div>
                       </button>
                     </TooltipTrigger>
                     {4 > derivedStep && (
@@ -525,22 +545,22 @@ export default function DiversifyQuestPage() {
                         aria-disabled={5 > derivedStep}
                         className={`relative z-10 flex items-center gap-3 px-4 py-2.5 rounded-2xl border-2 bg-white/80 shadow-sm hover:shadow-md transition-all ${stepToShow === 5 ? 'border-amber-200' : aiReviewed ? 'border-gray-200' : 'border-gray-200'} ${5 > derivedStep ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                       >
-                    <div className="absolute top-1.5 right-1.5">
-                      {performanceReviewed ? (
-                        <CheckCircle className="w-4 h-4 text-emerald-600" />
-                      ) : stepToShow === 5 ? (
-                        <Clock className="w-4 h-4 text-amber-600" />
-                      ) : aiReviewed ? (
-                        <Clock className="w-4 h-4 text-gray-400" />
-                      ) : (
-                        <Lock className="w-4 h-4 text-gray-300" />
-                      )}
-                    </div>
-                    <Activity className={`w-4 h-4 ${stepToShow === 5 ? 'text-amber-600' : performanceReviewed ? 'text-emerald-600' : 'text-gray-400'}`} />
-                    <div className="text-sm">
-                      <div className="font-medium text-gray-800">Performance</div>
-                      <div className="text-xs text-gray-600">Charts & AI tips</div>
-                    </div>
+                        <div className="absolute top-1.5 right-1.5">
+                          {performanceReviewed ? (
+                            <CheckCircle className="w-4 h-4 text-emerald-600" />
+                          ) : stepToShow === 5 ? (
+                            <Clock className="w-4 h-4 text-amber-600" />
+                          ) : aiReviewed ? (
+                            <Clock className="w-4 h-4 text-gray-400" />
+                          ) : (
+                            <Lock className="w-4 h-4 text-gray-300" />
+                          )}
+                        </div>
+                        <Activity className={`w-4 h-4 ${stepToShow === 5 ? 'text-amber-600' : performanceReviewed ? 'text-emerald-600' : 'text-gray-400'}`} />
+                        <div className="text-sm">
+                          <div className="font-medium text-gray-800">Performance</div>
+                          <div className="text-xs text-gray-600">Charts & AI tips</div>
+                        </div>
                       </button>
                     </TooltipTrigger>
                     {5 > derivedStep && (
@@ -556,143 +576,137 @@ export default function DiversifyQuestPage() {
         <div>
           {/* Consolidated guided journey (removed AI Guidance tab) */}
           <div className="space-y-6" aria-label="DiversifyQuest sections">
-              <div className="grid lg:grid-cols-12 gap-5 md:gap-6">
-                <div className="lg:col-span-2">
-                  <VerticalQuarterHUD currentQuarter={gameState.currentQuarter} />
-                </div>
-                <div className={`${stepToShow === 5 ? 'lg:col-span-10' : (stepToShow === 2 || stepToShow === 3) ? 'lg:col-span-6' : 'lg:col-span-7'} space-y-3`}>
-                  {stepToShow === 1 && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Calendar className="w-6 h-6 text-success-600" />
-                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 1: Review Market Events</h2>
-                          </div>
-                          <p className="text-base text-gray-600 mt-1">Read through the quarter's events and click "Mark Reviewed" to continue.</p>
-                        </div>
+            <div className="grid lg:grid-cols-12 gap-5 md:gap-6">
+              <div className="lg:col-span-2">
+                <VerticalQuarterHUD currentQuarter={gameState.currentQuarter} />
+              </div>
+              <div className={`${stepToShow === 5 ? 'lg:col-span-10' : stepToShow === 4 ? 'lg:col-span-7' : 'lg:col-span-6'} space-y-3`}>
+                {stepToShow === 1 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
                         <div className="flex items-center gap-2">
-                          {derivedStep >= 2 && (
-                            <Button variant="secondary" size="sm" onClick={() => setManualStep(2)} className="gap-1">
-                              Go to Step 2
-                              <ArrowRight className="w-4 h-4" />
-                            </Button>
-                          )}
+                          <Calendar className="w-6 h-6 text-success-600" />
+                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 1: Review Market Events</h2>
                         </div>
+                        <p className="text-base text-gray-600 mt-1">Read through the quarter's events and click "Mark Reviewed" to continue.</p>
                       </div>
-                      <EventDeck currentQuarter={gameState.currentQuarter} />
-                    </div>
-                  )}
-                  {stepToShow === 2 && (
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <BookOpen className="w-6 h-6 text-warning-600" />
-                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 2: Quarter Quiz</h2>
-                          </div>
-                          <p className="text-base text-gray-600 mt-1">Answer correctly to unlock rebalancing. Tip: Use the Market Events panel on the right—questions reflect this quarter's events.</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="secondary" size="sm" onClick={() => setManualStep(1)} className="gap-1">
-                            <ArrowLeft className="w-4 h-4" />
-                            Back to Step 1
-                          </Button>
-                          {derivedStep >= 3 && (
-                            <Button variant="secondary" size="sm" onClick={() => setManualStep(3)} className="gap-1">
-                              Go to Step 3
-                              <ArrowRight className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                      <QuarterQuiz currentQuarter={gameState.currentQuarter} onRegisterActions={setQuizActions} />
-                    </div>
-                  )}
-                  {stepToShow === 3 && (
-                    <>
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <TrendingUp className="w-6 h-6 text-brand-600" />
-                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 3: Rebalance Portfolio</h2>
-                          </div>
-                          <p className="text-base text-gray-600 mt-1">Select stocks and weights to diversify. Consider current Market Events (right) as they can impact returns.</p>
-                        </div>
-                        <div className="ml-auto flex items-center gap-2">
+                      <div className="flex items-center gap-2">
+                        {derivedStep >= 2 && (
                           <Button variant="secondary" size="sm" onClick={() => setManualStep(2)} className="gap-1">
-                            <ArrowLeft className="w-4 h-4" />
-                            Back to Step 2
-                          </Button>
-                          {derivedStep >= 4 && (
-                            <Button variant="secondary" size="sm" onClick={() => setManualStep(4)} className="gap-1">
-                              Go to Step 4
-                              <ArrowRight className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                      <PortfolioBuilder
-                        onRebalance={(h, cash) => rebalancePortfolio(h, cash)}
-                        onProceed={() => {
-                          // After submit/skip, show AI Review (Step 4)
-                          setManualStep(null)
-                        }}
-                        onRegisterActions={setRebalanceActions}
-                      />
 
-                      {/* Removed in-column Performance; now rendered full-width below grid */}
-                    </>
-                  )}
-                  {stepToShow === 4 && (
-                    <>
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <PieChart className="w-6 h-6 text-purple-600" />
-                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 4: AI Review</h2>
-                          </div>
-                          <p className="text-base text-gray-600 mt-1">AI summary of your quiz and rebalancing decisions.</p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button variant="secondary" size="sm" onClick={() => setManualStep(3)} className="gap-1">
-                            <ArrowLeft className="w-4 h-4" />
-                            Back to Step 3
-                          </Button>
-                          <Button variant="secondary" size="sm" onClick={() => { markAIReviewed(gameState.currentQuarter); setManualStep(5) }} className="gap-1">
-                            Go to Step 5
                             <ArrowRight className="w-4 h-4" />
                           </Button>
-                        </div>
+                        )}
                       </div>
-                      <AIReview onProceed={() => { setManualStep(null); markAIReviewed(gameState.currentQuarter) }} />
-
-                      {/* Removed in-column Performance; now rendered full-width below grid */}
-                    </>
-                  )}
-                  {stepToShow === 5 && (
-                    <>
-                      <div className="flex items-end justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <Activity className="w-6 h-6 text-blue-600" />
-                            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 5: Performance Review</h2>
-                          </div>
-                          <p className="text-base text-gray-600 mt-1">Interpret charts and learn how to analyze your portfolio.</p>
-                        </div>
+                    </div>
+                    <EventDeck currentQuarter={gameState.currentQuarter} />
+                  </div>
+                )}
+                {stepToShow === 2 && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
                         <div className="flex items-center gap-2">
-                          <Button variant="secondary" size="sm" onClick={() => setManualStep(4)} className="gap-1">
-                            <ArrowLeft className="w-4 h-4" />
-                            Back to Step 4
-                          </Button>
+                          <BookOpen className="w-6 h-6 text-warning-600" />
+                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 2: Market Events Quiz</h2>
                         </div>
+                        <p className="text-base text-gray-600 mt-1">Answer correctly to unlock rebalancing.
+                        </p>
                       </div>
-                      <PerformanceReview onProceed={() => { markPerformanceReviewed(gameState.currentQuarter); proceedToNextQuarter(); setManualStep(null) }} />
-                    </>
-                  )}
-                </div>
-                {stepToShow !== 5 && (
-                <div className={`${(stepToShow === 2 || stepToShow === 3) ? 'lg:col-span-4' : 'lg:col-span-3'} space-y-3`}>
+                      <div className="flex items-center gap-2">
+                        <Button variant="secondary" size="sm" onClick={() => setManualStep(1)} className="gap-1">
+                          <ArrowLeft className="w-4 h-4" />
+
+                        </Button>
+                        {derivedStep >= 3 && (
+                          <Button variant="secondary" size="sm" onClick={() => setManualStep(3)} className="gap-1">
+
+                            <ArrowRight className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <QuarterQuiz setManualStep={setManualStep} currentQuarter={gameState.currentQuarter} onRegisterActions={setQuizActions} />
+                  </div>
+                )}
+                {stepToShow === 3 && (
+                  <>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <TrendingUp className="w-6 h-6 text-brand-600" />
+                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 3: Rebalance Portfolio</h2>
+                        </div>
+                        <p className="text-base text-gray-600 mt-1">Select stocks and weights to diversify</p>
+                      </div>
+                      <div className="ml-auto flex items-center gap-2">
+                        <Button variant="secondary" size="sm" onClick={() => setManualStep(2)} className="gap-1">
+                          <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                        {derivedStep >= 4 && (
+                          <Button variant="secondary" size="sm" onClick={() => setManualStep(4)} className="gap-1">
+                            <ArrowRight className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                    <PortfolioBuilder
+                      onRebalance={(h, cash) => rebalancePortfolio(h, cash)}
+                      onProceed={() => {
+                        // After submit/skip, show AI Review (Step 4)
+                        setManualStep(null)
+                      }}
+                      onRegisterActions={setRebalanceActions}
+                    />
+
+                  </>
+                )}
+                {stepToShow === 4 && (
+                  <>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <PieChart className="w-6 h-6 text-purple-600" />
+                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 4: AI Review</h2>
+                        </div>
+                        <p className="text-base text-gray-600 mt-1">AI summary of your quiz and rebalancing decisions.</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button variant="secondary" size="sm" onClick={() => setManualStep(3)} className="gap-1">
+                          <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                        <Button variant="secondary" size="sm" onClick={() => { markAIReviewed(gameState.currentQuarter); setManualStep(5) }} className="gap-1">
+                          <ArrowRight className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <AIReview onProceed={() => { setManualStep(null); markAIReviewed(gameState.currentQuarter) }} />
+
+                  </>
+                )}
+                {stepToShow === 5 && (
+                  <>
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <Activity className="w-6 h-6 text-blue-600" />
+                          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Step 5: Performance Review</h2>
+                        </div>
+                        <p className="text-base text-gray-600 mt-1">Interpret charts and learn how to analyze your portfolio.</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button variant="secondary" size="sm" onClick={() => setManualStep(4)} className="gap-1">
+                          <ArrowLeft className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                    <PerformanceReview onProceed={() => { markPerformanceReviewed(gameState.currentQuarter); proceedToNextQuarter(); setManualStep(null) }} />
+                  </>
+                )}
+              </div>
+              {stepToShow !== 5 && (
+                <div className={`${stepToShow === 4 ? 'lg:col-span-3' : 'lg:col-span-4'} space-y-3`}>
                   {/* Understanding card appears only in Step 1 (right column) */}
                   {stepToShow === 1 && (
                     <UnderstandingMarketEventsCard />
@@ -708,9 +722,9 @@ export default function DiversifyQuestPage() {
                     <SebiPrinciplesCard />
                   )}
                 </div>
-                )}
-              </div>
+              )}
             </div>
+          </div>
         </div>
 
         {/* Performance is now a dedicated Step 5 above; removed the full-width section */}
