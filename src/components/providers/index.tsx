@@ -36,7 +36,7 @@ type ProvidersProps = {
 export function Providers({ children }: ProvidersProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <CopilotKit publicApiKey={process.env.NEXT_PUBLIC_COPILKIT_PUBLIC_API_KEY} runtimeUrl="/api/copilotkit">
+      <CopilotKit publicApiKey={process.env.NEXT_PUBLIC_COPILKIT_PUBLIC_API_KEY} runtimeUrl="/api/copilotkit" agent='chunking_orchestrator'>
         <CopilotProvider>
           <CopilotPopup
             instructions="You are a trading mentor AI assistant. Help users learn about trading, make informed decisions, and navigate the TradeMentor platform. Always prioritize user education and risk management. You have access to trading actions like setting symbols, filling order forms, opening order tickets, explaining concepts, highlighting risks, and starting lessons. Always confirm with users before taking mutating actions."

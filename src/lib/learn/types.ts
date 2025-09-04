@@ -16,6 +16,10 @@ export type LearningJourney = {
   sebi_topics?: string[];
   outcomes?: (LearningOutcome | string)[];
   status?: string;
+  // Source metadata (optional)
+  source_url?: string;
+  source_type?: string;
+  source_title?: string;
   // Aggregated
   lesson_count?: number;
   avg_lesson_duration?: number | null;

@@ -5,16 +5,23 @@ import {
   copilotRuntimeNextJSAppRouterEndpoint,
 } from '@copilotkit/runtime';
 import { NextRequest } from 'next/server';
+import { ExperimentalEmptyAdapter } from '@copilotkit/runtime';
 
 import { auth } from '@/lib/auth';
 
-const serviceAdapter = new OpenAIAdapter();
+// const serviceAdapter = new OpenAIAdapter();
+const serviceAdapter = new ExperimentalEmptyAdapter();
 
 const runtime = new CopilotRuntime({
   agents: {
     'chunking_orchestrator': new LangGraphAgent({
       deploymentUrl: 'http://localhost:8000',
-      graphId: '',
+      graphId: 'chunking_orchestrator',
+      langsmithApiKey: process.env.LANGCHAIN_API_KEY,
+    }),
+    'enhanced_lesson_creator': new LangGraphAgent({
+      deploymentUrl: 'http://localhost:8000',
+      graphId: 'enhanced_lesson_creator',
       langsmithApiKey: process.env.LANGCHAIN_API_KEY,
     }),
   },

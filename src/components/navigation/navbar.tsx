@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Globe, User, LogOut, Settings, Bell, Gamepad2, BookOpen, BarChart3, Wallet, Mic, Menu } from 'lucide-react';
+import { Globe, User, LogOut, Settings, Bell, Gamepad2, BookOpen, BarChart3, Wallet, Mic, Menu, PlusCircle } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -42,9 +42,10 @@ export function Navbar({ user }: NavbarProps) {
   const links = [
     { href: '/diversify-quest', label: 'Play', icon: Gamepad2 },
     { href: '/learn', label: 'Learn', icon: BookOpen },
-    { href: '/portfolio', label: 'Portfolio', icon: Wallet },
-    { href: '/trade', label: 'Trade', icon: BarChart3 },
-    { href: '/voice', label: 'Voice Rooms', icon: Mic },
+    { href: '/learn/create-course', label: 'Create Course', icon: PlusCircle },
+    // { href: '/portfolio', label: 'Portfolio', icon: Wallet },
+    // { href: '/trade', label: 'Trade', icon: BarChart3 },
+    // { href: '/voice', label: 'Voice Rooms', icon: Mic },
   ];
 
   const handleSignOut = async () => {
@@ -141,14 +142,14 @@ export function Navbar({ user }: NavbarProps) {
                     </SheetClose>
                   ))}
                 </div>
-                <div className="pt-2">
+                {/* <div className="pt-2">
                   <SheetClose asChild>
                     <Button className="w-full" asChild>
                       <Link href="/diversify-quest">Start Game</Link>
                     </Button>
                   </SheetClose>
-                </div>
-                {user ? (
+                </div> */}
+                {/* {user ? (
                   <div className="grid gap-2">
                     <SheetClose asChild>
                       <Link href="/profile" className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100">
@@ -177,7 +178,7 @@ export function Navbar({ user }: NavbarProps) {
                       </Button>
                     </SheetClose>
                   </div>
-                )}
+                )} */}
               </div>
             </SheetContent>
           </Sheet>
@@ -200,9 +201,9 @@ export function Navbar({ user }: NavbarProps) {
           </Select>
 
           {/* CTA */}
-          <Button size="sm" asChild>
+          {/* <Button size="sm" asChild>
             <Link href="/diversify-quest">Start Game</Link>
-          </Button>
+          </Button> */}
 
           {user && (
             <>
@@ -273,7 +274,7 @@ export function Navbar({ user }: NavbarProps) {
             </>
           )}
 
-          {!user && (
+          {/* {!user && (
             <div className="flex items-center space-x-2">
               <Button variant="ghost" size="sm" asChild>
                 <Link href="/sign-in">Sign in</Link>
@@ -282,7 +283,7 @@ export function Navbar({ user }: NavbarProps) {
                 <Link href="/sign-up">Sign up</Link>
               </Button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </nav>

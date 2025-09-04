@@ -45,7 +45,21 @@ function toGoogleDriveThumbnailUrl(url?: string): string | null {
     }
 }
 
-export default async function ModulesPage() {
+function labelFromSource(j?: Pick<LearningJourney, 'source_title' | 'source_url'>): string {
+    const t = (j as any)?.source_title as string | undefined;
+    if (t && t.trim()) return t.trim();
+    const url = (j as any)?.source_url as string | undefined;
+    if (!url) return 'Unknown source';
+    try {
+        const u = new URL(url, 'http://x');
+        const host = u.hostname.replace(/^www\./, '');
+        return host || url;
+    } catch {
+        return url;
+    }
+}
+
+export default async function ModulesPage({ searchParams }: { searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
     let journeys: LearningJourney[] = [];
     let loadError: string | null = null;
     try {
@@ -54,6 +68,26 @@ export default async function ModulesPage() {
     } catch (err: any) {
         loadError = err?.message || 'Failed to load modules';
     }
+
+    const resolvedSearchParams = await searchParams;
+
+    const rawSource = Array.isArray(resolvedSearchParams?.source)
+        ? resolvedSearchParams?.source[0]
+        : (resolvedSearchParams?.source as string | undefined);
+    const selectedSource = rawSource || '';
+
+    // Build unique sources from journeys (keyed by source_url)
+    const sourceMap = new Map<string, { title: string }>();
+    for (const j of journeys) {
+        const url = (j as any)?.source_url as string | undefined;
+        if (!url) continue;
+        if (!sourceMap.has(url)) sourceMap.set(url, { title: labelFromSource(j) });
+    }
+    const sources = Array.from(sourceMap.entries()).map(([url, meta]) => ({ url, title: meta.title }));
+
+    const filteredJourneys = selectedSource
+        ? journeys.filter((j) => (j as any)?.source_url === selectedSource)
+        : journeys;
 
     return (
         <MainLayout>
@@ -85,6 +119,26 @@ export default async function ModulesPage() {
                     <div className="pointer-events-none absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-gradient-to-tr from-cyan-100 to-transparent blur-2xl" />
                 </section>
 
+                {/* Source filter bar */}
+                {sources.length > 0 ? (
+                    <div className="flex flex-wrap gap-2 items-center">
+                        <Link href="/learn/modules" prefetch>
+                            <Button variant={selectedSource ? 'outline' : 'default'} size="sm" className="rounded-full">All sources</Button>
+                        </Link>
+                        {sources.map((s) => {
+                            const isActive = selectedSource === s.url;
+                            const href = `/learn/modules?source=${encodeURIComponent(s.url)}`;
+                            return (
+                                <Link key={s.url} href={href} prefetch>
+                                    <Button variant={isActive ? 'default' : 'outline'} size="sm" className="rounded-full">
+                                        {s.title}
+                                    </Button>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                ) : null}
+
                 {loadError ? (
                     <Card>
                         <CardHeader>
@@ -101,9 +155,18 @@ export default async function ModulesPage() {
                             <CardDescription>When journeys are available, they will appear here.</CardDescription>
                         </CardHeader>
                     </Card>
+                ) : filteredJourneys.length === 0 ? (
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>No modules for this source</CardTitle>
+                            <CardDescription>
+                                Try clearing the filter or selecting another source.
+                            </CardDescription>
+                        </CardHeader>
+                    </Card>
                 ) : (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-                        {journeys.map((j) => (
+                        {filteredJourneys.map((j) => (
                             <Card key={j._id} className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full pt-0">
                                 <div className="relative aspect-video">
                                     <Image

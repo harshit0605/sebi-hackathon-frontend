@@ -153,7 +153,8 @@ export type CopilotAction =
   | 'openOrderTicket'
   | 'explainField'
   | 'highlightRisk'
-  | 'startLesson';
+  | 'startLesson'
+  | 'createCourseFromPdf';
 
 export type CopilotContext = {
   currentSymbol?: string;

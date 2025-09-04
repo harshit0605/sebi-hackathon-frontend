@@ -43,16 +43,31 @@ export default function GuideViewer({ guide }: GuideViewerProps) {
                 {(Array.isArray(v.tags) && v.tags.length) || v.summary ? (
                     <div className="space-y-3">
                         {Array.isArray(v.tags) && v.tags.length ? (
-                            <div className="flex flex-wrap gap-2">
-                                {v.tags.map((t, i) => (
-                                    <Badge
-                                        key={i}
-                                        variant="outline"
-                                        className="rounded-full px-3 py-1 text-sm font-medium bg-white text-gray-800 border border-gray-300 shadow-sm"
-                                    >
-                                        {t}
-                                    </Badge>
-                                ))}
+                            <div className="flex justify-between">
+                                <div className="flex flex-wrap gap-2">
+                                    {v.tags.map((t, i) => (
+                                        <Badge
+                                            key={i}
+                                            variant="outline"
+                                            className="rounded-full px-3 py-1 text-sm font-medium bg-white text-gray-800 border border-gray-300 shadow-sm"
+                                        >
+                                            {t}
+                                        </Badge>
+                                    ))}
+                                </div>
+                                {guide.source_url ? (
+                                    <div className=''>
+                                        <Link href={`/learn/modules?source=${encodeURIComponent(guide.source_url)}`}>
+                                            <Button size="sm" className="bg-gradient-to-r from-blue-600 to-emerald-600 text-white flex-1">
+                                                Related learning modules
+                                                <ExternalLink className="h-4 w-4 ml-2" />
+                                            </Button>
+                                        </Link>
+                                        <div className="text-xs text-muted-foreground mt-1 font-semibold">
+                                            Modules based on this offical SEBI guide
+                                        </div>
+                                    </div>
+                                ) : null}
                             </div>
                         ) : null}
                         {v.summary ? (
@@ -67,6 +82,8 @@ export default function GuideViewer({ guide }: GuideViewerProps) {
                         ) : null}
                     </div>
                 ) : null}
+
+
 
                 {/* Video: media left, description right */}
                 <div className="grid md:grid-cols-12 gap-10 items-center">
@@ -136,22 +153,23 @@ export default function GuideViewer({ guide }: GuideViewerProps) {
                                     <ArrowLeft className="h-4 w-4" /> Back to guides
                                 </Button>
                             </Link>
+
                         </div>
                         <div className="flex items-center gap-3">
                             <ToggleGroup
                                 type="single"
                                 value={lang}
                                 onValueChange={(v) => v && setLang(v as GuideLanguage)}
-                                className="rounded-full p-1 shadow-inner ring-1 ring-black/5 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40"
+                                className="rounded-full p-1 shadow-inner ring-1 ring-black/5 bg-white/60 backdrop-blur supports-[backdrop-filter]:bg-white/40 mr-6 "
                             >
-                                <ToggleGroupItem value="en" aria-label="English" className="rounded-full px-5 py-2.5 text-sm font-semibold text-gray-700 data-[state=on]:bg-brand-600 data-[state=on]:text-white hover:bg-white/80 transition-colors">
+                                <ToggleGroupItem value="en" aria-label="English" className="rounded-full px-5 py-2.5 text-sm font-semibold text-gray-700 data-[state=on]:bg-gradient-to-r from-blue-600 to-emerald-600 data-[state=on]:text-white hover:bg-white/80 transition-colors ">
                                     EN
                                 </ToggleGroupItem>
-                                <ToggleGroupItem value="hi" aria-label="Hindi" className="rounded-full px-5 py-2.5 text-sm font-semibold text-gray-700 data-[state=on]:bg-brand-600 data-[state=on]:text-white hover:bg-white/80 transition-colors">
+                                <ToggleGroupItem value="hi" aria-label="Hindi" className="rounded-full px-5 py-2.5 text-sm font-semibold text-gray-700 data-[state=on]:bg-gradient-to-r from-blue-600 to-emerald-600 data-[state=on]:text-white hover:bg-white/80 transition-colors">
                                     HI
                                 </ToggleGroupItem>
                             </ToggleGroup>
-                            <Sheet>
+                            {/* <Sheet>
                                 <SheetTrigger asChild>
                                     <Button size="sm">Show study guide</Button>
                                 </SheetTrigger>
@@ -163,7 +181,8 @@ export default function GuideViewer({ guide }: GuideViewerProps) {
                                         <StudyBlock v={selected as any} showHeader={false} />
                                     </div>
                                 </SheetContent>
-                            </Sheet>
+                            </Sheet> */}
+
                         </div>
                     </div>
                 </div>

@@ -47,9 +47,9 @@ export function CopilotProvider({ children }: CopilotProviderProps) {
   }, []);
 
   const confirmAction = useCallback((actionId: string) => {
-    setActivityLog(prev => 
-      prev.map(activity => 
-        activity.id === actionId 
+    setActivityLog(prev =>
+      prev.map(activity =>
+        activity.id === actionId
           ? { ...activity, confirmed: true }
           : activity
       )
@@ -228,7 +228,7 @@ export function CopilotProvider({ children }: CopilotProviderProps) {
         'portfolio': 'Your portfolio is the collection of all your investments and their current values.',
       };
 
-      const explanation = explanations[field.toLowerCase()] || 
+      const explanation = explanations[field.toLowerCase()] ||
         `${field} is an important trading concept. Would you like me to provide more specific guidance?`;
 
       toast.info('Trading Concept Explained', {
@@ -316,6 +316,70 @@ export function CopilotProvider({ children }: CopilotProviderProps) {
             label: 'Not Now',
             onClick: () => {
               resolve({ success: false, message: 'Lesson start cancelled by user' });
+            },
+          },
+        });
+      });
+    },
+  });
+
+  useCopilotAction({
+    name: 'createCourseFromPdf',
+    description: 'Create an educational course from a SEBI PDF with optional manual page ranges',
+    parameters: [
+      {
+        name: 'pdfUrl',
+        type: 'string',
+        description: 'HTTP(s) URL to the PDF',
+        required: true,
+      },
+      {
+        name: 'chunkingMode',
+        type: 'string',
+        description: "Chunking mode: 'auto' or 'manual' (default 'auto')",
+        required: false,
+      },
+      {
+        name: 'manualRangesJson',
+        type: 'string',
+        description: 'Optional JSON array of { from, to, label? } to control manual chunking',
+        required: false,
+      },
+    ],
+    handler: async ({ pdfUrl, chunkingMode = 'auto', manualRangesJson }) => {
+      return new Promise((resolve) => {
+        addActivity({
+          action: 'createCourseFromPdf',
+          description: `Create course from PDF: ${pdfUrl}`,
+          userId: context.userProfile.id || 'anonymous',
+          confirmed: false,
+        });
+
+        toast.info('Open Create Course page with provided PDF?', {
+          description: 'We will navigate and start the agent with your inputs.',
+          action: {
+            label: 'Open',
+            onClick: () => {
+              try {
+                localStorage.setItem(
+                  'createCourseParams',
+                  JSON.stringify({
+                    pdfUrl,
+                    chunkingMode,
+                    manualRangesJson,
+                    autoStart: true,
+                  }),
+                );
+              } catch { }
+              window.location.href = '/learn/create-course';
+              confirmAction(Date.now().toString());
+              resolve({ success: true, pdfUrl, chunkingMode });
+            },
+          },
+          cancel: {
+            label: 'Cancel',
+            onClick: () => {
+              resolve({ success: false, message: 'Navigation cancelled by user' });
             },
           },
         });

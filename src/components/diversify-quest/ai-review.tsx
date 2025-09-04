@@ -53,12 +53,12 @@ export function AIReview({ onProceed }: { onProceed: () => void }) {
           <div className="grid md:grid-cols-3 gap-6">
             <SummaryCard title="Quiz Result" icon={Trophy} accent="emerald">
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-extrabold tracking-tight text-gray-900">{quizScore}%</div>
+                <div className="text-3xl font-extrabold tracking-tight text-gray-900">{quizScore} out of 7 ✅</div>
                 <Badge variant="outline" className={quizPassed ? 'bg-emerald-100/80 text-emerald-700 border-emerald-300' : 'bg-red-100/80 text-red-700 border-red-300'}>
                   {quizPassed ? 'Passed' : 'Failed'}
                 </Badge>
               </div>
-              <p className="text-xs text-gray-600 mt-2">You must pass to unlock rebalancing.</p>
+              {/* <p className="text-xs text-gray-600 mt-2">You must pass to unlock rebalancing.</p> */}
             </SummaryCard>
 
             <SummaryCard title="Rebalance Summary" icon={PieChart} accent="blue">
