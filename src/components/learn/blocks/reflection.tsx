@@ -13,7 +13,7 @@ export default function ReflectionBlock({
 }) {
   const t = useTranslations('lesson');
   return (
-    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm  w-3/4">
+    <Card className="backdrop-blur bg-gradient-to-br from-white/60 via-rose-50/40 to-white/60 border-transparent shadow-sm">
       <CardHeader>
         <CardTitle className="text-lg">{t('type.reflection')}</CardTitle>
         {block.payload.guidance_md ? (

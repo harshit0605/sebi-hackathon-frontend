@@ -17,8 +17,15 @@ export default function Markdown({
     typeof children === 'string'
       ? children.replace(/\\r\\n/g, '\n').replace(/\\n/g, '\n')
       : children;
-  // Keep markdown semantics intact for headings and lists by avoiding forced <br/> injections.
-  const withDoubleBreaks = normalized;
+  // Lightly improve readability for sources that lack blank lines between sections by
+  // turning single newlines into paragraph breaks (double newlines) when not already present.
+  // This keeps existing double newlines intact and avoids interfering with block elements.
+  const withDoubleBreaks =
+    typeof normalized === 'string'
+      // Insert paragraph breaks for single newlines, but avoid when the next line starts with
+      // common markdown block starters (lists/headings/quotes/numeric lists).
+      ? normalized.replace(/([^\n])\n(?!\n|[-*#0-9>])/g, '$1\n\n')
+      : normalized;
   return (
     <div className={className}>
       <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>

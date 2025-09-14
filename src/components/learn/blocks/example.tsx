@@ -11,7 +11,7 @@ export default function ExampleBlock({
   anchors?: Record<string, Anchor>;
 }) {
   return (
-    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm w-3/4">
+    <Card className="backdrop-blur bg-gradient-to-br from-white/60 via-amber-50/40 to-white/60 border-transparent shadow-sm">
       <CardHeader>
         <CardTitle className="text-lg">{block.payload.scenario_title}</CardTitle>
         {block.payload.qa_pairs?.length ? (

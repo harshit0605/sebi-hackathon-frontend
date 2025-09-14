@@ -27,6 +27,7 @@ function difficultyBadge(d?: string) {
 export default async function LessonPage({ params }: { params: Promise<{ journey: string; slug: string }> }) {
   const { journey: journeySlug, slug } = await params;
   const t = await getTranslations('lesson');
+  const tm = await getTranslations('modulesPage');
   let lesson: Lesson | null = null;
   let loadError: string | null = null;
   try {
@@ -55,19 +56,29 @@ export default async function LessonPage({ params }: { params: Promise<{ journey
 
   // Resolve current UI language and compute language-specific fields with fallback to 'en'
   const locale = await getLocale();
-  const uiLang = (locale as string) || 'en';
+  const uiLang = ((locale as string) || 'en').split('-')[0];
   const lLang: any = (lesson as any)?.languages?.[uiLang] || (lesson as any)?.languages?.en || {};
 
   // Sanitize nested data for client component (remove Mongo/ObjectId/Buffer etc.)
-  const safeBlocks: ContentBlock[] = (lesson.content_blocks ?? []).map((b: any) => ({
-    _id: String(b._id ?? b.id ?? `${lesson!.slug}-${b.order ?? 0}`),
-    lesson_id: String(b.lesson_id ?? lesson!.slug),
-    order: Number(b.order ?? 0),
-    type: b.type,
-    anchor_ids: Array.isArray(b.anchor_ids) ? b.anchor_ids.map((x: any) => String(x)) : [],
-    // Localize payload from languages[uiLang].payload with fallback to English, then legacy payload
-    payload: (b.languages?.[uiLang]?.payload) ?? (b.languages?.en?.payload) ?? b.payload,
-  }));
+  const safeBlocks: ContentBlock[] = (lesson.content_blocks ?? []).map((b: any) => {
+    const base = {
+      _id: String(b._id ?? b.id ?? `${lesson!.slug}-${b.order ?? 0}`),
+      lesson_id: String(b.lesson_id ?? lesson!.slug),
+      order: Number(b.order ?? 0),
+      type: b.type,
+      anchor_ids: Array.isArray(b.anchor_ids) ? b.anchor_ids.map((x: any) => String(x)) : [],
+    } as const;
+    // Localize payload
+    const p = (b.languages?.[uiLang]?.payload) ?? (b.languages?.en?.payload) ?? b.payload;
+    // Normalize quiz item anchor_ids to strings to support anchor matching
+    const payload = b.type === 'quiz' && p?.items
+      ? { ...p, items: (p.items as any[]).map((it: any) => ({
+          ...it,
+          anchor_ids: Array.isArray(it?.anchor_ids) ? it.anchor_ids.map((x: any) => String(x)) : it?.anchor_ids,
+        })) }
+      : p;
+    return { ...base, payload } as ContentBlock;
+  });
 
   const safeAnchors: Anchor[] = (lesson.anchor_details ?? []).map((a: any) => ({
     _id: String(a._id ?? a.id ?? a.short_label ?? Math.random().toString(36).slice(2)),
@@ -115,11 +126,9 @@ export default async function LessonPage({ params }: { params: Promise<{ journey
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
-          <Link href={`/learn/modules/${journeySlug}`} className="inline-flex">
-            <Button className="rounded-full bg-white/40 hover:bg-white/60 text-emerald-800 border border-white/60 backdrop-blur px-3 py-1 h-8">
-              <ChevronLeft className="h-4 w-4 mr-1" /> {t('backToJourney')}
-            </Button>
-          </Link>
+          <Button asChild className="rounded-full bg-white/40 hover:bg-white/60 text-emerald-800 border border-white/60 backdrop-blur px-3 py-1 h-8">
+            <Link href={`/learn/modules/${journeySlug}`}><ChevronLeft className="h-4 w-4 mr-1" /> {t('backToJourney')}</Link>
+          </Button>
         </div>
         <section className="rounded-2xl border border-transparent bg-gradient-to-r from-emerald-50/70 via-teal-50/50 to-cyan-50/70 backdrop-blur-md p-5 shadow-sm">
           <div className="relative z-10 flex items-start justify-between gap-4">
@@ -134,11 +143,11 @@ export default async function LessonPage({ params }: { params: Promise<{ journey
                 <Clock className="h-4 w-4" /> {lesson.estimated_minutes} min
               </span>
               <span className={`backdrop-blur-sm bg-white/60 border border-white/60 rounded-full px-3 py-1 text-sm capitalize ${difficultyBadge(lesson.difficulty)}`}>
-                {lesson.difficulty}
+                {tm(`difficulty.${lesson.difficulty}` as any)}
               </span>
             </div>
           </div>
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/40 blur-3xl" />
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/40 blur-3xl pointer-events-none" />
         </section>
 
         {/* Objectives/References moved into LessonViewer as the first menu entry */}

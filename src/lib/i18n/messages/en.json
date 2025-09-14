@@ -240,6 +240,11 @@
       "meta": "{count} questions • pass at {threshold}%",
       "sheetDesc": "Answer all questions and submit to record a grade."
     },
+    "anchor": {
+      "pdfLabel": "PDF",
+      "webLabel": "Web",
+      "verified": "Verified {date}"
+    },
     "empty": {
       "noReferences": "No references available.",
       "noBlocks": "No blocks in this lesson.",
@@ -262,10 +267,29 @@
     "includesTitle": "This course includes",
     "lessonsLabel": "lessons",
     "totalLabel": "total",
+    "topicsLabel": "topics",
+    "badgeSebiAligned": "SEBI-aligned curriculum",
+    "badgeBeginnerFriendly": "Beginner friendly",
+    "difficulty": {
+      "easy": "easy",
+      "medium": "medium",
+      "hard": "hard"
+    },
+    "level": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
     "backToModules": "Back to Modules",
     "noTopics": "No topics or tags listed.",
     "noLessons": "No lessons yet",
     "noLessonsSub": "Check back soon for new lessons in this module.",
-    "startLesson": "Start Lesson"
+    "startLesson": "Start Lesson",
+    "aboutSebiTitle": "About SEBI Education",
+    "aboutSebiSub": "Why SEBI alignment matters",
+    "aboutSebiBullet1": "Investor-first principles and compliant learning outcomes.",
+    "aboutSebiBullet2": "Focus on financial literacy, risk awareness, and protection.",
+    "aboutSebiBullet3": "Modules curated to reflect SEBI’s recommended topic areas.",
+    "learnMoreSebi": "Learn more on SEBI Investor Education"
   }
 }

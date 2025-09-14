@@ -18,7 +18,7 @@ export default function InteractiveBlock({
   const effectiveCfg = cfg ?? { title: block.payload.widget_kind };
 
   return (
-    <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm w-3/4">
+    <Card className="backdrop-blur bg-gradient-to-br from-white/60 via-emerald-50/40 to-white/60 border-transparent shadow-sm">
       <CardHeader>
         <CardTitle className="text-lg">{cfg?.title ?? block.payload.widget_kind}</CardTitle>
         {cfg?.description ? <CardDescription>{cfg.description}</CardDescription> : null}

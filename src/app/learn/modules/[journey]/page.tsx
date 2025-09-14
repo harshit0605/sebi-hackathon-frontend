@@ -70,7 +70,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
 
   // Derived metadata
   const locale = await getLocale();
-  const uiLang = (locale as string) || 'en';
+  const uiLang = ((locale as string) || 'en').split('-')[0];
   const jLang: any = (journey as any)?.languages?.[uiLang] || (journey as any)?.languages?.en || {};
 
   const lessonCount = journey.lesson_count ?? lessons.length;
@@ -86,10 +86,14 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
   const prerequisites: string[] = (journey.prerequisites ?? [])
     .map((p: any) => (typeof p === 'string' ? p : p?.text || p?.title || p?.requirement))
     .filter(Boolean);
-  const tags: string[] = (Array.isArray((jLang as any)?.tags) ? (jLang as any).tags : ((journey as any)?.tags ?? [])).filter(Boolean);
-  const topics: string[] = (journey.sebi_topics ?? []).filter(Boolean);
-  // Merge tags & topics to avoid duplicates in UI
-  const topicTagChips: string[] = Array.from(new Set([...(topics || []), ...(tags || [])]));
+  // Prefer localized tags if present; otherwise fallback to SEBI topics (English) only for en locale,
+  // or to English tags as a last resort. This avoids mixing English chips when Hindi is selected.
+  const localizedTags: string[] = Array.isArray((jLang as any)?.tags) ? (jLang as any).tags.filter(Boolean) : [];
+  const enTags: string[] = Array.isArray((journey as any)?.tags) ? (journey as any).tags.filter(Boolean) : [];
+  const topics: string[] = Array.isArray(journey.sebi_topics) ? journey.sebi_topics.filter(Boolean) : [];
+  // Show only localized tags when available; otherwise, show SEBI topics.
+  // Avoid falling back to English tags in non-English locales to prevent mixed-language chips.
+  const topicTagChips: string[] = localizedTags.length ? localizedTags : topics;
 
   return (
     <MainLayout>
@@ -123,10 +127,10 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">{(jLang?.title as string) || (journey as any)?.title || journey.slug}</h1>
             <div className="mt-2 flex items-center gap-2 text-xs md:text-sm">
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1">
-                <ShieldCheck className="h-3.5 w-3.5" /> SEBI-aligned curriculum
+                <ShieldCheck className="h-3.5 w-3.5" /> {t('badgeSebiAligned')}
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 px-2.5 py-1">
-                <Sparkles className="h-3.5 w-3.5" /> Beginner friendly
+                <Sparkles className="h-3.5 w-3.5" /> {t('badgeBeginnerFriendly')}
               </span>
             </div>
             {(jLang?.description as string) ? (
@@ -138,12 +142,12 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
             <span className="inline-flex items-center gap-2 rounded-full bg-white/80 ring-1 ring-emerald-200 px-3 py-1 shadow-sm">
               <BookOpen className="h-4 w-4 text-emerald-600" />
               <span className="text-sm md:text-base font-medium">{lessonCount}</span>
-              <span className="text-xs text-muted-foreground">lessons</span>
+              <span className="text-xs text-muted-foreground">{t('lessonsLabel')}</span>
             </span>
             <span className="inline-flex items-center gap-2 rounded-full bg-white/80 ring-1 ring-sky-200 px-3 py-1 shadow-sm">
               <Clock className="h-4 w-4 text-sky-600" />
               <span className="text-sm md:text-base font-medium">~{derivedHours}h</span>
-              <span className="text-xs text-muted-foreground">total</span>
+              <span className="text-xs text-muted-foreground">{t('totalLabel')}</span>
             </span>
           </div>
         </div>
@@ -151,8 +155,8 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
         {/* At-a-glance section */}
         <div className="grid gap-6 lg:grid-cols-3">
           <Card className="lg:col-span-2 rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
-            <CardHeader>
-              <CardTitle className="text-xl md:text-2xl font-semibold flex items-center gap-2">
+            <CardHeader className="pb-2 space-y-1">
+              <CardTitle className="text-xl md:text-2xl font-semibold flex items-center gap-2 leading-tight">
                 <GraduationCap className="h-5 w-5 text-emerald-600" /> {t('whatYoullLearnTitle')}
               </CardTitle>
               <CardDescription>
@@ -250,7 +254,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                             <span className="text-base md:text-md font-semibold leading-tight">{lTitle}</span>
                           </div>
                           <div className="flex items-center gap-3">
-                            <Badge className={difficultyBadge(l.difficulty)}>{l.difficulty}</Badge>
+                            <Badge className={difficultyBadge(l.difficulty)}>{t(`difficulty.${l.difficulty}` as any)}</Badge>
                             <span className="text-xs text-muted-foreground flex items-center gap-1">
                               <Clock className="h-4 w-4" /> {l.estimated_minutes} min
                             </span>
@@ -290,7 +294,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
               <Card className="rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-lg md:text-xl flex items-center gap-2">
-                    <Layers className="h-5 w-5 text-emerald-600" /> This course includes
+                    <Layers className="h-5 w-5 text-emerald-600" /> {t('includesTitle')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -298,9 +302,9 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                     <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-emerald-600" /> <span><strong>{lessonCount}</strong> {t('lessonsLabel')}</span></div>
                     <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-emerald-600" /> ~{derivedHours}h {t('totalLabel')}</div>
                     {journey.level ? (
-                      <div className="flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-600" /> <span className="capitalize">{journey.level}</span></div>
+                      <div className="flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-600" /> <span className="capitalize">{t(`level.${journey.level}` as any)}</span></div>
                     ) : null}
-                    <div className="flex items-center gap-2"><Layers className="h-4 w-4 text-emerald-600" /> {topicTagChips.length} topics</div>
+                    <div className="flex items-center gap-2"><Layers className="h-4 w-4 text-emerald-600" /> {topicTagChips.length} {t('topicsLabel')}</div>
                   </div>
                 </CardContent>
               </Card>
@@ -309,18 +313,18 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
               <Card className="rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
                 <CardHeader>
                   <CardTitle className="text-lg md:text-xl flex items-center gap-2">
-                    <Landmark className="h-5 w-5 text-emerald-600" /> About SEBI Education
+                    <Landmark className="h-5 w-5 text-emerald-600" /> {t('aboutSebiTitle')}
                   </CardTitle>
-                  <CardDescription>Why SEBI alignment matters</CardDescription>
+                  <CardDescription>{t('aboutSebiSub')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ul className="text-sm text-muted-foreground space-y-2">
-                    <li>Investor-first principles and compliant learning outcomes.</li>
-                    <li>Focus on financial literacy, risk awareness, and protection.</li>
-                    <li>Modules curated to reflect SEBI’s recommended topic areas.</li>
+                    <li>{t('aboutSebiBullet1')}</li>
+                    <li>{t('aboutSebiBullet2')}</li>
+                    <li>{t('aboutSebiBullet3')}</li>
                   </ul>
                   <a href="https://www.sebi.gov.in/investors" target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 text-emerald-700 hover:text-emerald-800 underline underline-offset-2 text-sm">
-                    Learn more on SEBI Investor Education <ExternalLink className="h-4 w-4" />
+                    {t('learnMoreSebi')} <ExternalLink className="h-4 w-4" />
                   </a>
                 </CardContent>
               </Card>

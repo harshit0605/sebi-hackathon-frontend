@@ -240,6 +240,11 @@
       "meta": "{count} प्रश्न • {threshold}% पर उत्तीर्ण",
       "sheetDesc": "सभी प्रश्नों के उत्तर दें और ग्रेड दर्ज करने के लिए जमा करें।"
     },
+    "anchor": {
+      "pdfLabel": "PDF",
+      "webLabel": "वेब",
+      "verified": "सत्यापित {date}"
+    },
     "empty": {
       "noReferences": "कोई संदर्भ उपलब्ध नहीं।",
       "noBlocks": "इस पाठ में कोई ब्लॉक्स नहीं हैं।",
@@ -262,10 +267,29 @@
     "includesTitle": "इस कोर्स में शामिल है",
     "lessonsLabel": "पाठ",
     "totalLabel": "कुल",
+    "topicsLabel": "विषय",
+    "badgeSebiAligned": "SEBI-अनुरूप पाठ्यक्रम",
+    "badgeBeginnerFriendly": "शुरुआती के लिए अनुकूल",
+    "difficulty": {
+      "easy": "आसान",
+      "medium": "मध्यम",
+      "hard": "कठिन"
+    },
+    "level": {
+      "beginner": "शुरुआती",
+      "intermediate": "मध्यम",
+      "advanced": "उन्नत"
+    },
     "backToModules": "मॉड्यूल पर वापस",
     "noTopics": "कोई विषय या टैग सूचीबद्ध नहीं।",
     "noLessons": "अभी कोई पाठ नहीं",
     "noLessonsSub": "इस मॉड्यूल में नए पाठों के लिए जल्द ही वापस देखें।",
-    "startLesson": "पाठ शुरू करें"
+    "startLesson": "पाठ शुरू करें",
+    "aboutSebiTitle": "SEBI शिक्षा के बारे में",
+    "aboutSebiSub": "SEBI संरेखण क्यों महत्वपूर्ण है",
+    "aboutSebiBullet1": "निवेशक-प्रथम सिद्धांत और अनुपालन शिक्षण परिणाम।",
+    "aboutSebiBullet2": "वित्तीय साक्षरता, जोखिम जागरूकता और सुरक्षा पर ध्यान।",
+    "aboutSebiBullet3": "SEBI के अनुशंसित विषय क्षेत्रों को दर्शाने के लिए क्यूरेटेड मॉड्यूल।",
+    "learnMoreSebi": "SEBI निवेशक शिक्षा पर और जानें"
   }
 }

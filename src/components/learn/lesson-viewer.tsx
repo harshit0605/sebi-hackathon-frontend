@@ -37,6 +37,8 @@ type QuizAttempt = {
 
 export default function LessonViewer({ lesson }: LessonViewerProps) {
     const t = useTranslations('lesson');
+    const tc = useTranslations('common');
+
     const [selectedIndex, setSelectedIndex] = useState(0);
     const blocks = lesson.content_blocks ?? [];
 
@@ -48,6 +50,44 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
 
     const selectedMenu = menu[selectedIndex] ?? menu[0];
     const selected = selectedMenu.kind === 'block' ? selectedMenu.block : undefined;
+    const blockAnchors = useMemo(() => {
+        if (!selected || !(lesson.anchor_details && lesson.anchor_details.length)) return [] as Anchor[];
+        const idset = new Set<string>();
+        const labelset = new Set<string>();
+
+        const addKey = (raw: any) => {
+            if (raw == null) return;
+            const s = String(raw);
+            idset.add(s);
+            labelset.add(s);
+            // Support composite ids like "lesson::short_label"
+            const parts = s.split('::');
+            if (parts.length > 1) {
+                labelset.add(parts[parts.length - 1]);
+            }
+        };
+
+        // Block-level
+        const blk: any = selected as any;
+        if (Array.isArray(blk.anchor_ids)) blk.anchor_ids.forEach(addKey);
+        if (Array.isArray(blk.anchors)) blk.anchors.forEach(addKey);
+
+        // Quiz items
+        if (selected.type === 'quiz') {
+            for (const it of selected.payload.items ?? []) {
+                const item: any = it;
+                if (Array.isArray(item.anchor_ids)) item.anchor_ids.forEach(addKey);
+                if (Array.isArray(item.anchors)) item.anchors.forEach(addKey);
+            }
+        }
+
+        if (idset.size === 0 && labelset.size === 0) return [] as Anchor[];
+        return (lesson.anchor_details ?? []).filter((a) => {
+            const aid = String(a._id);
+            const s = a.short_label ? String(a.short_label) : '';
+            return idset.has(aid) || labelset.has(s) || labelset.has(aid);
+        });
+    }, [selected?._id, selected?.type, (selected as any)?.anchor_ids?.length, (selected as any)?.anchors?.length, (selected as any)?.payload?.items?.length, lesson.anchor_details]);
 
     // Quiz sheet state
     const [open, setOpen] = useState(false);
@@ -269,11 +309,11 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
 
                 {/* Objectives panel or block content */}
                 {selectedMenu.kind === 'objectives' ? (
-                    <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+                    <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_260px]">
                         <ObjectivesPanel objectives={lesson.learning_objectives} />
-                        <div className="space-y-3">
+                        <div className="space-y-2">
                             <h3 className="text-sm font-semibold text-muted-foreground">{t('references', { count: (lesson.anchor_details ?? []).length })}</h3>
-                            <div className="space-y-3">
+                            <div className="space-y-2">
                                 {(lesson.anchor_details ?? []).map((a) => (
                                     <AnchorCard key={a._id} anchor={a} />
                                 ))}
@@ -286,48 +326,77 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                 ) : selected ? (
                     selected.type === 'quiz' ? (
                         <>
-                            <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm  w-3/4">
-                                <CardHeader>
-                                    <CardTitle className="text-lg">{t('quiz.title')}</CardTitle>
-                                    <CardDescription>
-                                        {t('quiz.meta', { count: selected.payload.items.length, threshold: Math.max(67, selected.payload.pass_threshold ?? 0) })}
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    {attempt ? (
-                                        <div className="rounded-lg border p-3 bg-emerald-50/40">
-                                            <div className="text-sm font-medium">{t('quiz.yourGrade')}</div>
-                                            <div className="flex items-center justify-between">
-                                                <div className="text-2xl font-bold text-emerald-700">{attempt.last}%</div>
-                                                <div className="text-xs text-muted-foreground">{t('quiz.best')}: {attempt.best}% • {t('quiz.attempts')}: {attempt.attempts}</div>
+                            <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_260px]">
+                                <Card className="backdrop-blur bg-gradient-to-br from-white/60 via-violet-50/40 to-white/60 border-transparent shadow-sm">
+                                    <CardHeader>
+                                        <CardTitle className="text-lg">{t('quiz.title')}</CardTitle>
+                                        <CardDescription>
+                                            {t('quiz.meta', { count: selected.payload.items.length, threshold: Math.max(67, selected.payload.pass_threshold ?? 0) })}
+                                        </CardDescription>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        {attempt ? (
+                                            <div className="rounded-lg border p-3 bg-emerald-50/40">
+                                                <div className="text-sm font-medium">{t('quiz.yourGrade')}</div>
+                                                <div className="flex items-center justify-between">
+                                                    <div className="text-2xl font-bold text-emerald-700">{attempt.last}%</div>
+                                                    <div className="text-xs text-muted-foreground">{t('quiz.best')}: {attempt.best}% • {t('quiz.attempts')}: {attempt.attempts}</div>
+                                                </div>
                                             </div>
+                                        ) : null}
+                                        <Button onClick={startQuiz} className="">{attempt ? t('quiz.retry') : t('quiz.attempt')}</Button>
+                                    </CardContent>
+                                </Card>
+                                {blockAnchors.length ? (
+                                    <div className="space-y-2">
+                                        <h3 className="text-sm font-semibold text-muted-foreground">{t('references', { count: blockAnchors.length })}</h3>
+                                        <div className="space-y-2">
+                                            {blockAnchors.map((a) => (
+                                                <AnchorCard key={a._id} anchor={a} />
+                                            ))}
                                         </div>
-                                    ) : null}
-                                    <Button onClick={startQuiz} className="">{attempt ? t('quiz.retry') : t('quiz.attempt')}</Button>
-                                </CardContent>
-                            </Card>
-                            <div className="mt-4">
-                                <ActionBar
-                                    onNext={() => setSelectedIndex(Math.min(selectedIndex + 1, menu.length - 1))}
-                                    showNext={selectedIndex < menu.length - 1}
-                                    showMark={!isCompleted(selected._id)}
-                                    onMark={() => markCompleted(selected._id)}
-                                    completed={isCompleted(selected._id)}
-                                />
+                                    </div>
+                                ) : null}
+                            </div>
+                            <div className="grid lg:grid-cols-[minmax(0,1fr)_260px]">
+                                <div className="mt-4">
+                                    <ActionBar
+                                        onNext={() => setSelectedIndex(Math.min(selectedIndex + 1, menu.length - 1))}
+                                        showNext={selectedIndex < menu.length - 1}
+                                        showMark={!isCompleted(selected._id)}
+                                        onMark={() => markCompleted(selected._id)}
+                                        completed={isCompleted(selected._id)}
+                                    />
+                                </div>
+                                <div />
                             </div>
                         </>
                     ) : (
                         <>
-                            <ContentRenderer block={selected} anchors={lesson.anchor_details} />
-                            <div className="mt-4">
-                                <ActionBar
-
-                                    onNext={() => setSelectedIndex(Math.min(selectedIndex + 1, menu.length - 1))}
-                                    showNext={selectedIndex < menu.length - 1}
-                                    showMark={!isCompleted(selected._id)}
-                                    onMark={() => markCompleted(selected._id)}
-                                    completed={isCompleted(selected._id)}
-                                />
+                            <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_260px]">
+                                <ContentRenderer block={selected} anchors={lesson.anchor_details} />
+                                {blockAnchors.length ? (
+                                    <div className="space-y-2">
+                                        <h3 className="text-sm font-semibold text-muted-foreground">{t('references', { count: blockAnchors.length })}</h3>
+                                        <div className="space-y-2">
+                                            {blockAnchors.map((a) => (
+                                                <AnchorCard key={a._id} anchor={a} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                ) : null}
+                            </div>
+                            <div className="grid lg:grid-cols-[minmax(0,1fr)_260px]">
+                                <div className="mt-4">
+                                    <ActionBar
+                                        onNext={() => setSelectedIndex(Math.min(selectedIndex + 1, menu.length - 1))}
+                                        showNext={selectedIndex < menu.length - 1}
+                                        showMark={!isCompleted(selected._id)}
+                                        onMark={() => markCompleted(selected._id)}
+                                        completed={isCompleted(selected._id)}
+                                    />
+                                </div>
+                                <div />
                             </div>
                         </>
                     )
@@ -369,8 +438,8 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                                     <Progress value={(answers.filter((a) => a >= 0).length / Math.max(1, selected.payload.items.length)) * 100} />
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <Button variant="secondary" onClick={() => setOpen(false)}>{t('common.back')}</Button>
-                                    <Button disabled={submitting} onClick={submitQuiz}>{submitting ? t('common.loading') : t('common.submit')}</Button>
+                                    <Button variant="secondary" onClick={() => setOpen(false)}>{tc('back')}</Button>
+                                    <Button disabled={submitting} onClick={submitQuiz}>{submitting ? tc('loading') : tc('submit')}</Button>
                                 </div>
                             </div>
                         ) : null}
@@ -448,6 +517,7 @@ function prettyType(tp: ContentBlock['type'], t: ReturnType<typeof useTranslatio
 }
 
 function AnchorCard({ anchor }: { anchor: Anchor }) {
+    const t = useTranslations('lesson');
     const date = anchor.last_verified_at ? new Date(anchor.last_verified_at) : null;
     const isPdf = (anchor.source_type?.toLowerCase()?.includes('pdf') ?? false) || (anchor.source_url?.toLowerCase()?.endsWith('.pdf') ?? false);
     const SourceIcon = isPdf ? FileText : Globe;
@@ -455,7 +525,7 @@ function AnchorCard({ anchor }: { anchor: Anchor }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <button className="w-full text-left rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-sm hover:shadow-md hover:border-brand-200 transition p-4">
+                <button className="w-full max-w-[260px] text-left rounded-xl border border-white/60 bg-white/50 backdrop-blur-md shadow-sm hover:shadow-md hover:border-brand-200 transition p-3">
                     <div className="flex items-start gap-3">
                         <div className="min-w-0">
                             <div className="text-sm font-semibold truncate">{title}</div>
@@ -463,8 +533,8 @@ function AnchorCard({ anchor }: { anchor: Anchor }) {
                                 <div className="text-xs text-muted-foreground line-clamp-3 mt-0.5">{anchor.excerpt}</div>
                             ) : null}
                             <div className="mt-2 flex items-center gap-2 text-[11px] text-muted-foreground">
-                                <div className="truncate">{anchor.source_type || (isPdf ? 'PDF' : 'Web')}</div>
-                                {date ? <div className="truncate">Verified {date.toLocaleDateString()}</div> : null}
+                                <div className="truncate">{anchor.source_type || (isPdf ? t('anchor.pdfLabel') : t('anchor.webLabel'))}</div>
+                                {date ? <div className="truncate">{t('anchor.verified', { date: date.toLocaleDateString() })}</div> : null}
                             </div>
                             {anchor.source_url ? (
                                 <div className="mt-2 flex items-center gap-2 text-xs">
@@ -492,9 +562,9 @@ function AnchorCard({ anchor }: { anchor: Anchor }) {
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
                         <div className="flex items-center gap-2">
                             <SourceIcon className="h-4 w-4 text-brand-600" />
-                            <span>{anchor.source_type || (isPdf ? 'PDF' : 'Web')}</span>
+                            <span>{anchor.source_type || (isPdf ? t('anchor.pdfLabel') : t('anchor.webLabel'))}</span>
                         </div>
-                        {date ? <div>Verified {date.toLocaleDateString()}</div> : null}
+                        {date ? <div>{t('anchor.verified', { date: date.toLocaleDateString() })}</div> : null}
                     </div>
                     {anchor.source_url ? (
                         <a href={anchor.source_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-brand-700 hover:underline underline-offset-4 text-sm">

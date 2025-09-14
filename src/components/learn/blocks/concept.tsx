@@ -14,7 +14,7 @@ export default function ConceptBlock({
   const t = useTranslations('lesson');
   const aCount = block.anchor_ids?.length ?? 0;
   return (
-    <Card className="w-3/4 backdrop-blur bg-white/60 border-white/50 shadow-sm">
+    <Card className="backdrop-blur bg-gradient-to-br from-white/60 via-blue-50/40 to-white/60 border-transparent shadow-sm">
       <CardHeader>
         <CardTitle className="text-lg">{block.payload.heading}</CardTitle>
         {aCount > 0 ? (
