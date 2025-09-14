@@ -37,7 +37,7 @@ const runtime = new CopilotRuntime({
           required: true,
         },
       ],
-      handler: async ({ symbol }) => {
+      handler: async ({ symbol } : { symbol: string }) => {
         // This will be handled on the client side
         return {
           success: true,
@@ -63,7 +63,7 @@ const runtime = new CopilotRuntime({
           required: true,
         },
       ],
-      handler: async ({ field, value }) => {
+      handler: async ({ field, value } : { field: string, value: string }) => {
         return {
           success: true,
           field,
@@ -94,7 +94,7 @@ const runtime = new CopilotRuntime({
           required: true,
         },
       ],
-      handler: async ({ field }) => {
+      handler: async ({ field } : { field: string }) => {
         // This could fetch explanations from a knowledge base
         const explanations: Record<string, string> = {
           'stop-loss': 'Stop-loss is an order to sell a security when it reaches a particular price point.',
@@ -123,7 +123,7 @@ const runtime = new CopilotRuntime({
           required: true,
         },
       ],
-      handler: async ({ issue }) => {
+      handler: async ({ issue } : { issue: string }) => {
         return {
           success: true,
           issue,
@@ -142,7 +142,7 @@ const runtime = new CopilotRuntime({
           required: true,
         },
       ],
-      handler: async ({ lessonId }) => {
+      handler: async ({ lessonId } : { lessonId: string }) => {
         return {
           success: true,
           lessonId,

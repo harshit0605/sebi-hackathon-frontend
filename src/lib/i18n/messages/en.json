@@ -19,7 +19,20 @@
     "open": "Open",
     "view": "View",
     "share": "Share",
-    "copy": "Copy"
+    "copy": "Copy",
+    "submit": "Submit"
+  },
+  "modulesIndex": {
+    "title": "Learning Modules",
+    "subtitle": "Structured journeys with outcomes, prerequisites, and time estimates.",
+    "backToLearn": "Back to Learn",
+    "allSources": "All sources",
+    "unableTitle": "Unable to load modules",
+    "noModulesTitle": "No modules yet",
+    "noModulesDesc": "When journeys are available, they will appear here.",
+    "noSourceTitle": "No modules for this source",
+    "noSourceDesc": "Try clearing the filter or selecting another source.",
+    "openModule": "Open Module"
   },
   "auth": {
     "signIn": "Sign In",
@@ -149,5 +162,110 @@
     "serverError": "Server error. Please try again later.",
     "notFound": "The requested resource was not found",
     "forbidden": "You don't have permission to access this resource"
+  },
+  "learnPage": {
+    "title": "Learn Trading the Right Way",
+    "badges": {
+      "sebiAligned": "SEBI-aligned",
+      "beginnerFriendly": "Beginner friendly",
+      "outcomeFocused": "Outcome-focused"
+    },
+    "banner": {
+      "newGuides": "New: Official SEBI/NISM Guides now in multiple languages"
+    },
+    "hero": {
+      "description": "A modern learning experience with structured modules, hands‑on lessons, and official SEBI/NISM guides transformed into interactive content.",
+      "inclusion": "Available in English and Hindi for broader inclusion."
+    },
+    "cta": {
+      "exploreModules": "Explore Modules",
+      "browseGuides": "Browse Guides"
+    },
+    "cardModules": {
+      "tag": "SEBI aligned",
+      "title": "Financial education modules",
+      "description": "Structured journeys and lessons designed to foster informed trading decisions",
+      "points": {
+        "point1": "Guided journeys with clear objectives, prerequisites, and time estimates",
+        "point2": "Lessons include quizzes, interactive widgets, concept breakdowns, and reflections",
+        "point3": "Trackable structure with difficulty levels and lesson ordering"
+      },
+      "button": "Go to Modules"
+    },
+    "cardGuides": {
+      "badge": "Bilingual",
+      "titlePrefix": "Official SEBI & NISM Guides,",
+      "titleReimagined": "Reimagined !",
+      "description": "SEBI/NISM sources turned into interactive content",
+      "features": {
+        "audio": "Audio podcasts",
+        "video": "Video summaries",
+        "study": "Study guides"
+      },
+      "inclusion": "English and Hindi support for broader reach and inclusion",
+      "button": "Go to Guides"
+    }
+  },
+  "lesson": {
+    "backToJourney": "Back to Journey",
+    "sidebar": {
+      "lesson": "Lesson",
+      "objectives": "Objectives",
+      "overview": "Overview",
+      "quizNotAttempted": "Quiz • Not attempted"
+    },
+    "type": {
+      "quiz": "Quiz",
+      "interactive": "Interactive",
+      "concept": "Concept",
+      "example": "Example",
+      "reflection": "Reflection",
+      "callout": "Callout"
+    },
+    "actions": {
+      "next": "Go to next item",
+      "markCompleted": "Mark as completed"
+    },
+    "state": {
+      "completed": "Completed"
+    },
+    "quiz": {
+      "title": "Quiz",
+      "attempt": "Attempt quiz",
+      "retry": "Retry",
+      "yourGrade": "Your grade",
+      "best": "Best",
+      "attempts": "Attempts",
+      "progress": "Progress",
+      "meta": "{count} questions • pass at {threshold}%",
+      "sheetDesc": "Answer all questions and submit to record a grade."
+    },
+    "empty": {
+      "noReferences": "No references available.",
+      "noBlocks": "No blocks in this lesson.",
+      "noObjectives": "No objectives listed."
+    },
+    "guidance": "Guidance",
+    "references": "{count, plural, one {# reference} other {# references}}",
+    "objectives": {
+      "title": "Learning objectives",
+      "sub": "What you'll achieve"
+    }
+  },
+  "modulesPage": {
+    "courseContentTitle": "Course content",
+    "courseContentSub": "Browse lessons and start anywhere",
+    "whatYoullLearnTitle": "What you'll learn",
+    "keyOutcomes": "Key outcomes from this module",
+    "sebiTopicsTitle": "SEBI Recommended Topics",
+    "sebiTopicsSub": "Aligned to SEBI's Investor Education framework",
+    "includesTitle": "This course includes",
+    "lessonsLabel": "lessons",
+    "totalLabel": "total",
+    "backToModules": "Back to Modules",
+    "noTopics": "No topics or tags listed.",
+    "noLessons": "No lessons yet",
+    "noLessonsSub": "Check back soon for new lessons in this module.",
+    "startLesson": "Start Lesson"
   }
 }

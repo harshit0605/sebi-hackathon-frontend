@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '
 import { BookOpen, ChevronRight, ChevronLeft, FileText, HelpCircle, ListChecks, Sparkles, CheckCircle2, ArrowRight, Globe } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from '@/components/ui/dialog';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 
 // Local storage helpers for quiz attempts
 const quizKey = (lessonSlug: string, blockId: string) => `learn:quiz:${lessonSlug}:${blockId}`;
@@ -35,6 +36,7 @@ type QuizAttempt = {
 };
 
 export default function LessonViewer({ lesson }: LessonViewerProps) {
+    const t = useTranslations('lesson');
     const [selectedIndex, setSelectedIndex] = useState(0);
     const blocks = lesson.content_blocks ?? [];
 
@@ -118,13 +120,13 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                 return {
                     button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/70 border-emerald-200 shadow-sm' : 'bg-emerald-50/40 hover:bg-emerald-50 border-emerald-200/60'}`,
                     icon: `${isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-emerald-50 text-emerald-700'}`,
-                    chip: { label: 'Interactive', className: 'bg-emerald-100 text-emerald-700' },
+                    chip: { label: tIntl('type.interactive'), className: 'bg-emerald-100 text-emerald-700' },
                 } as const;
             case 'quiz':
                 return {
                     button: `group w-full text-left mb-2 rounded-xl border px-3 py-2 flex items-center justify-between gap-2 transition ${isActive ? 'bg-gradient-to-r from-violet-50 to-fuchsia-50 border-violet-200 shadow-sm' : 'bg-violet-50/40 hover:bg-violet-50 border-violet-200/60'}`,
                     icon: `${isActive ? 'bg-violet-100 text-violet-700' : 'bg-violet-50 text-violet-700'}`,
-                    chip: { label: 'Quiz', className: 'bg-violet-100 text-violet-700' },
+                    chip: { label: tIntl('type.quiz'), className: 'bg-violet-100 text-violet-700' },
                 } as const;
             case 'concept':
                 return {
@@ -195,10 +197,13 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
         setOpen(false);
     };
 
+    // Short helper for translations inside helpers where closure on t is awkward
+    const tIntl = (key: string, values?: Record<string, any>) => t(key as any, values);
+
     const Sidebar = (
         <aside className="w-full sm:w-80 shrink-0 rounded-2xl border bg-white/70 backdrop-blur p-3">
             <div className="px-2 py-2">
-                <div className="text-md font-semibold text-emerald-700">Lesson</div>
+                <div className="text-md font-semibold text-emerald-700">{t('sidebar.lesson')}</div>
                 <div className="text-md font-bold leading-tight">{lesson.title}</div>
             </div>
             <div className="max-h-[70vh] overflow-auto pr-1">
@@ -231,21 +236,21 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                                 </span>
                                 <div className="flex flex-col">
                                     <span className="text-sm font-medium">
-                                        {item.kind === 'objectives' ? 'Objectives' : labelForBlock(b!)}
+                                        {item.kind === 'objectives' ? t('sidebar.objectives') : labelForBlock(b!, t)}
                                     </span>
                                     <span className="text-[11px] text-muted-foreground">
                                         {item.kind === 'objectives'
-                                            ? 'Overview'
+                                            ? t('sidebar.overview')
                                             : b!.type === 'quiz'
-                                                ? (quizMeta ? `Quiz • Best: ${quizMeta.best}%` : 'Quiz • Not attempted')
-                                                : prettyType(b!.type)}
+                                                ? (quizMeta ? `${t('type.quiz')} • ${t('quiz.best')}: ${quizMeta.best}%` : t('sidebar.quizNotAttempted'))
+                                                : prettyType(b!.type, t)}
                                     </span>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
                                 {b && (b.type === 'interactive' || b.type === 'quiz') ? (
                                     <span className={`text-[10px] px-1.5 py-0.5 rounded ${b.type === 'interactive' ? 'bg-emerald-100 text-emerald-700' : 'bg-violet-100 text-violet-700'}`}>
-                                        {b.type === 'interactive' ? 'Interactive' : 'Quiz'}
+                                        {b.type === 'interactive' ? t('type.interactive') : t('type.quiz')}
                                     </span>
                                 ) : null}
                                 <ChevronRight className="h-4 w-4 text-muted-foreground" />
@@ -267,13 +272,13 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                     <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
                         <ObjectivesPanel objectives={lesson.learning_objectives} />
                         <div className="space-y-3">
-                            <h3 className="text-sm font-semibold text-muted-foreground">References</h3>
+                            <h3 className="text-sm font-semibold text-muted-foreground">{t('references', { count: (lesson.anchor_details ?? []).length })}</h3>
                             <div className="space-y-3">
                                 {(lesson.anchor_details ?? []).map((a) => (
                                     <AnchorCard key={a._id} anchor={a} />
                                 ))}
                                 {(!lesson.anchor_details || lesson.anchor_details.length === 0) && (
-                                    <div className="text-sm text-muted-foreground">No references available.</div>
+                                    <div className="text-sm text-muted-foreground">{t('empty.noReferences')}</div>
                                 )}
                             </div>
                         </div>
@@ -283,22 +288,22 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                         <>
                             <Card className="backdrop-blur bg-white/60 border-white/50 shadow-sm  w-3/4">
                                 <CardHeader>
-                                    <CardTitle className="text-lg">Quiz</CardTitle>
+                                    <CardTitle className="text-lg">{t('quiz.title')}</CardTitle>
                                     <CardDescription>
-                                        {selected.payload.items.length} questions • pass at {Math.max(67, selected.payload.pass_threshold ?? 0)}%
+                                        {t('quiz.meta', { count: selected.payload.items.length, threshold: Math.max(67, selected.payload.pass_threshold ?? 0) })}
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     {attempt ? (
                                         <div className="rounded-lg border p-3 bg-emerald-50/40">
-                                            <div className="text-sm font-medium">Your grade</div>
+                                            <div className="text-sm font-medium">{t('quiz.yourGrade')}</div>
                                             <div className="flex items-center justify-between">
                                                 <div className="text-2xl font-bold text-emerald-700">{attempt.last}%</div>
-                                                <div className="text-xs text-muted-foreground">Best: {attempt.best}% • Attempts: {attempt.attempts}</div>
+                                                <div className="text-xs text-muted-foreground">{t('quiz.best')}: {attempt.best}% • {t('quiz.attempts')}: {attempt.attempts}</div>
                                             </div>
                                         </div>
                                     ) : null}
-                                    <Button onClick={startQuiz} className="">{attempt ? 'Retry' : 'Attempt quiz'}</Button>
+                                    <Button onClick={startQuiz} className="">{attempt ? t('quiz.retry') : t('quiz.attempt')}</Button>
                                 </CardContent>
                             </Card>
                             <div className="mt-4">
@@ -327,7 +332,7 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                         </>
                     )
                 ) : (
-                    <Card><CardContent className="py-10 text-center text-muted-foreground">No blocks in this lesson.</CardContent></Card>
+                    <Card><CardContent className="py-10 text-center text-muted-foreground">{t('empty.noBlocks')}</CardContent></Card>
                 )}
             </section>
 
@@ -335,8 +340,8 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
             <Sheet open={open} onOpenChange={setOpen}>
                 <SheetContent side="right" className="inset-0 w-screen sm:w-screen max-w-none sm:max-w-none">
                     <SheetHeader>
-                        <SheetTitle>Quiz</SheetTitle>
-                        <SheetDescription>Answer all questions and submit to record a grade.</SheetDescription>
+                        <SheetTitle>{t('quiz.title')}</SheetTitle>
+                        <SheetDescription>{t('quiz.sheetDesc')}</SheetDescription>
                     </SheetHeader>
                     <div className="p-4 space-y-4">
                         {selected?.type === 'quiz' ? (
@@ -360,12 +365,12 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
                                     </div>
                                 ))}
                                 <div className="pt-2">
-                                    <div className="text-xs text-muted-foreground mb-1">Progress</div>
+                                    <div className="text-xs text-muted-foreground mb-1">{t('quiz.progress')}</div>
                                     <Progress value={(answers.filter((a) => a >= 0).length / Math.max(1, selected.payload.items.length)) * 100} />
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <Button variant="secondary" onClick={() => setOpen(false)}>Back</Button>
-                                    <Button disabled={submitting} onClick={submitQuiz}>{submitting ? 'Submitting...' : 'Submit'}</Button>
+                                    <Button variant="secondary" onClick={() => setOpen(false)}>{t('common.back')}</Button>
+                                    <Button disabled={submitting} onClick={submitQuiz}>{submitting ? t('common.loading') : t('common.submit')}</Button>
                                 </div>
                             </div>
                         ) : null}
@@ -377,11 +382,12 @@ export default function LessonViewer({ lesson }: LessonViewerProps) {
 }
 
 function ObjectivesPanel({ objectives }: { objectives: string[] }) {
+    const t = useTranslations('lesson');
     return (
         <Card className="backdrop-blur-md bg-gradient-to-br from-white/60 via-emerald-50/40 to-white/60 border-transparent shadow-sm">
             <CardHeader>
-                <CardTitle className="text-lg">Learning objectives</CardTitle>
-                <CardDescription>What you'll achieve</CardDescription>
+                <CardTitle className="text-lg">{t('objectives.title')}</CardTitle>
+                <CardDescription>{t('objectives.sub')}</CardDescription>
             </CardHeader>
             <CardContent>
                 {objectives && objectives.length ? (
@@ -396,46 +402,46 @@ function ObjectivesPanel({ objectives }: { objectives: string[] }) {
                         ))}
                     </ul>
                 ) : (
-                    <div className="text-sm text-muted-foreground">No objectives listed.</div>
+                    <div className="text-sm text-muted-foreground">{t('empty.noObjectives')}</div>
                 )}
             </CardContent>
         </Card>
     );
 }
 
-function labelForBlock(b: ContentBlock) {
+function labelForBlock(b: ContentBlock, t: ReturnType<typeof useTranslations>) {
     switch (b.type) {
         case 'concept':
-            return b.payload.heading || 'Concept';
+            return b.payload.heading || t('type.concept');
         case 'example':
-            return b.payload.scenario_title || 'Example';
+            return b.payload.scenario_title || t('type.example');
         case 'interactive':
-            return b.payload.widget_config?.title || b.payload.widget_kind || 'Interactive';
+            return b.payload.widget_config?.title || b.payload.widget_kind || t('type.interactive');
         case 'quiz':
-            return 'Quiz';
+            return t('type.quiz');
         case 'reflection':
-            return 'Reflection';
+            return t('type.reflection');
         case 'callout':
-            return b.payload.title || 'Callout';
+            return b.payload.title || t('type.callout');
         default:
             return 'Block';
     }
 }
 
-function prettyType(t: ContentBlock['type']) {
-    switch (t) {
+function prettyType(tp: ContentBlock['type'], t: ReturnType<typeof useTranslations>) {
+    switch (tp) {
         case 'concept':
-            return 'Concept';
+            return t('type.concept');
         case 'example':
-            return 'Example';
+            return t('type.example');
         case 'interactive':
-            return 'Interactive';
+            return t('type.interactive');
         case 'quiz':
-            return 'Quiz';
+            return t('type.quiz');
         case 'reflection':
-            return 'Reflection';
+            return t('type.reflection');
         case 'callout':
-            return 'Callout';
+            return t('type.callout');
         default:
             return 'Block';
     }
@@ -515,21 +521,22 @@ function ActionBar({
     onMark?: () => void;
     completed?: boolean;
 }) {
+    const t = useTranslations('lesson');
     return (
         <div className="flex items-center justify-end gap-4 w-3/4">
             {showNext ? (
                 <Button onClick={onNext} className="inline-flex items-center gap-2">
-                    Go to next item <ArrowRight className="h-4 w-4" />
+                    {t('actions.next')} <ArrowRight className="h-4 w-4" />
                 </Button>
             ) : null}
             {completed ? (
                 <div className="inline-flex items-center gap-2 text-emerald-700">
                     <CheckCircle2 className="h-4 w-4" />
-                    <span className="text-sm font-medium">Completed</span>
+                    <span className="text-sm font-medium">{t('state.completed')}</span>
                 </div>
             ) : showMark ? (
                 <Button variant="outline" onClick={onMark} className="inline-flex items-center gap-2">
-                    Mark as completed <CheckCircle2 className="h-4 w-4" />
+                    {t('actions.markCompleted')} <CheckCircle2 className="h-4 w-4" />
                 </Button>
             ) : null}
         </div>

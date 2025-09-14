@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { auth } from '@/lib/auth';
+// import { auth } from '@/lib/auth';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -26,36 +26,36 @@ export async function middleware(request: NextRequest) {
   }
 
   // Get session from Better-Auth
-  try {
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
+  // try {
+  //   const session = await auth.api.getSession({
+  //     headers: request.headers,
+  //   });
 
-    if (!session) {
-      // Redirect to sign-in if no session
-      const signInUrl = new URL('/sign-in', request.url);
-      signInUrl.searchParams.set('callbackUrl', pathname);
-      return NextResponse.redirect(signInUrl);
-    }
+  //   if (!session) {
+  //     // Redirect to sign-in if no session
+  //     const signInUrl = new URL('/sign-in', request.url);
+  //     signInUrl.searchParams.set('callbackUrl', pathname);
+  //     return NextResponse.redirect(signInUrl);
+  //   }
 
-    // Add user info to headers for API routes
-    const requestHeaders = new Headers(request.headers);
-    requestHeaders.set('x-user-id', session.user.id);
-    requestHeaders.set('x-user-role', session.user.role || 'user');
+  //   // Add user info to headers for API routes
+  //   const requestHeaders = new Headers(request.headers);
+  //   requestHeaders.set('x-user-id', session.user.id);
+  //   requestHeaders.set('x-user-role', session.user.role || 'user');
 
-    return NextResponse.next({
-      request: {
-        headers: requestHeaders,
-      },
-    });
-  } catch (error) {
-    console.error('Middleware auth error:', error);
+  //   return NextResponse.next({
+  //     request: {
+  //       headers: requestHeaders,
+  //     },
+  //   });
+  // } catch (error) {
+  //   console.error('Middleware auth error:', error);
     
-    // Redirect to sign-in on auth error
-    const signInUrl = new URL('/sign-in', request.url);
-    signInUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(signInUrl);
-  }
+  //   // Redirect to sign-in on auth error
+  //   const signInUrl = new URL('/sign-in', request.url);
+  //   signInUrl.searchParams.set('callbackUrl', pathname);
+  //   return NextResponse.redirect(signInUrl);
+  // }
 }
 
 export const config = {

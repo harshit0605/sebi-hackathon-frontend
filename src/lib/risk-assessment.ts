@@ -83,7 +83,7 @@ export class RiskAssessment {
       stock 
     } = orderData;
 
-    const orderPrice = price || stock?.lastPrice || 0;
+    const orderPrice = price || stock?.price || 0;
     const orderValue = quantity * orderPrice;
 
     // Calculate individual risk factors
@@ -144,7 +144,7 @@ export class RiskAssessment {
     }
 
     // Market order warnings
-    if (orderType === 'market' && riskLevel !== 'low') {
+    if (orderType === 'MARKET' && riskLevel !== 'low') {
       warnings.push('Market orders execute at current market price');
       nudges.push('Consider using a limit order to control execution price');
     }
@@ -186,11 +186,9 @@ export class RiskAssessment {
         'Consider paper trading first to practice strategies'
       );
 
-      // Always require confirmation for beginners on medium+ risk
-      if (baseAssessment.riskLevel !== 'low') {
-        baseAssessment.shouldConfirm = true;
-        baseAssessment.delaySeconds = 8;
-      }
+      // Always require confirmation for beginners after conservative adjustments
+      baseAssessment.shouldConfirm = true;
+      baseAssessment.delaySeconds = 8;
     }
 
     return baseAssessment;

@@ -8,6 +8,8 @@ import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from '@/
 import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbSeparator, BreadcrumbPage } from '@/components/ui/breadcrumb';
 import { notFound } from 'next/navigation';
 import type { Lesson, LearningJourney } from '@/lib/learn/types';
+import { getLocale } from 'next-intl/server';
+import { getTranslations } from 'next-intl/server';
 
 function difficultyBadge(d?: string) {
   switch (d) {
@@ -37,6 +39,7 @@ function levelBadge(level?: string) {
 
 export default async function JourneyPage({ params }: { params: Promise<{ journey: string }> }) {
   const { journey: journeySlug } = await params;
+  const t = await getTranslations('modulesPage');
   let journey: LearningJourney | null = null;
   let lessons: Lesson[] = [];
   let loadError: string | null = null;
@@ -66,18 +69,24 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
   if (!journey) return notFound();
 
   // Derived metadata
+  const locale = await getLocale();
+  const uiLang = (locale as string) || 'en';
+  const jLang: any = (journey as any)?.languages?.[uiLang] || (journey as any)?.languages?.en || {};
+
   const lessonCount = journey.lesson_count ?? lessons.length;
   const totalMinutes = lessons?.length
     ? lessons.reduce((acc, l) => acc + (l.estimated_minutes ?? 0), 0)
     : (journey.avg_lesson_duration ?? 0) * lessonCount;
   const derivedHours = journey.estimated_hours ?? Math.max(0, Math.round((totalMinutes / 60) * 10) / 10);
-  const outcomes: string[] = (journey.outcomes ?? [])
+  const outcomes: string[] = (
+    Array.isArray((jLang as any)?.outcomes) ? (jLang as any).outcomes : ((journey as any)?.outcomes ?? [])
+  )
     .map((o: any) => (typeof o === 'string' ? o : o?.outcome))
     .filter(Boolean);
   const prerequisites: string[] = (journey.prerequisites ?? [])
     .map((p: any) => (typeof p === 'string' ? p : p?.text || p?.title || p?.requirement))
     .filter(Boolean);
-  const tags: string[] = (journey.tags ?? []).filter(Boolean);
+  const tags: string[] = (Array.isArray((jLang as any)?.tags) ? (jLang as any).tags : ((journey as any)?.tags ?? [])).filter(Boolean);
   const topics: string[] = (journey.sebi_topics ?? []).filter(Boolean);
   // Merge tags & topics to avoid duplicates in UI
   const topicTagChips: string[] = Array.from(new Set([...(topics || []), ...(tags || [])]));
@@ -106,12 +115,12 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
             </BreadcrumbList>
           </Breadcrumb>
           <Button asChild variant="outline">
-            <Link href="/learn/modules">Back to Modules</Link>
+            <Link href="/learn/modules">{t('backToModules')}</Link>
           </Button>
         </div>
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] items-start">
           <div>
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">{journey.title}</h1>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">{(jLang?.title as string) || (journey as any)?.title || journey.slug}</h1>
             <div className="mt-2 flex items-center gap-2 text-xs md:text-sm">
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1">
                 <ShieldCheck className="h-3.5 w-3.5" /> SEBI-aligned curriculum
@@ -120,8 +129,8 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                 <Sparkles className="h-3.5 w-3.5" /> Beginner friendly
               </span>
             </div>
-            {journey.description ? (
-              <p className="text-muted-foreground mt-3 max-w-3xl text-base md:text-lg leading-relaxed">{journey.description}</p>
+            {(jLang?.description as string) ? (
+              <p className="text-muted-foreground mt-3 max-w-3xl text-base md:text-lg leading-relaxed">{jLang.description as string}</p>
             ) : null}
             <div className="h-1 w-28 md:w-32 rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 mt-4" />
           </div>
@@ -144,10 +153,10 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
           <Card className="lg:col-span-2 rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle className="text-xl md:text-2xl font-semibold flex items-center gap-2">
-                <GraduationCap className="h-5 w-5 text-emerald-600" /> What you'll learn
+                <GraduationCap className="h-5 w-5 text-emerald-600" /> {t('whatYoullLearnTitle')}
               </CardTitle>
               <CardDescription>
-                Key outcomes from this module
+                {t('keyOutcomes')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -169,9 +178,9 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
           <Card className="rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm hover:shadow-md transition-shadow">
             <CardHeader>
               <CardTitle className="text-lg md:text-xl flex items-center gap-2">
-                <Landmark className="h-5 w-5 text-emerald-600" /> SEBI Recommended Topics
+                <Landmark className="h-5 w-5 text-emerald-600" /> {t('sebiTopicsTitle')}
               </CardTitle>
-              <CardDescription>Aligned to SEBI's Investor Education framework</CardDescription>
+              <CardDescription>{t('sebiTopicsSub')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               {topicTagChips.length ? (
@@ -187,7 +196,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                   ))}
                 </div>
               ) : (
-                <div className="text-sm text-muted-foreground">No topics or tags listed.</div>
+                <div className="text-sm text-muted-foreground">{t('noTopics')}</div>
               )}
               <div className="text-xs text-muted-foreground flex items-center gap-1">
                 <ExternalLink className="h-3.5 w-3.5" /> Reference: <a href="https://www.sebi.gov.in/" target="_blank" rel="noreferrer" className="underline underline-offset-2">sebi.gov.in</a>
@@ -220,18 +229,25 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
             <Card className="lg:col-span-2 rounded-2xl border-emerald-100/60 bg-gradient-to-br from-white to-emerald-50/20 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-xl md:text-2xl font-semibold flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 text-emerald-600" /> Course content
+                  <BookOpen className="h-5 w-5 text-emerald-600" /> {t('courseContentTitle')}
                 </CardTitle>
-                <CardDescription>Browse lessons and start anywhere</CardDescription>
+                <CardDescription>{t('courseContentSub')}</CardDescription>
               </CardHeader>
               <CardContent>
                 <Accordion type="multiple" className="w-full">
-                  {lessons.map((l) => (
+                  {lessons.map((l) => {
+                    const lLang: any = (l as any)?.languages?.[uiLang] || (l as any)?.languages?.en || {};
+                    const lTitle = (lLang?.title as string) || (l as any)?.title || l.slug;
+                    const lObjectives: string[] = Array.isArray(lLang?.learning_objectives)
+                      ? (lLang.learning_objectives as string[])
+                      : (Array.isArray((l as any)?.learning_objectives) ? (l as any).learning_objectives : []);
+                    const lSubtitle: string | undefined = (lLang?.subtitle as string) || (l as any)?.subtitle;
+                    return (
                     <AccordionItem key={l._id} value={String(l.slug)} className="relative">
                       <AccordionTrigger className="pl-2 pr-32">
                         <div className="grid w-full grid-cols-[1fr_auto] items-center gap-4">
                           <div className="flex flex-col min-h-6 justify-center">
-                            <span className="text-base md:text-md font-semibold leading-tight">{l.title}</span>
+                            <span className="text-base md:text-md font-semibold leading-tight">{lTitle}</span>
                           </div>
                           <div className="flex items-center gap-3">
                             <Badge className={difficultyBadge(l.difficulty)}>{l.difficulty}</Badge>
@@ -243,13 +259,13 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                       </AccordionTrigger>
                       <div className="absolute right-0 top-2">
                         <Button asChild size="sm" className="rounded-full px-3 py-1 text-xs">
-                          <Link href={`/learn/modules/${journey.slug}/lesson/${l.slug}`}>Start Lesson</Link>
+                          <Link href={`/learn/modules/${journey.slug}/lesson/${l.slug}`}>{t('startLesson')}</Link>
                         </Button>
                       </div>
                       <AccordionContent>
-                        {Array.isArray(l.learning_objectives) && l.learning_objectives.length ? (
+                        {Array.isArray(lObjectives) && lObjectives.length ? (
                           <ul className="space-y-2">
-                            {l.learning_objectives.map((obj, idx) => (
+                            {lObjectives.map((obj, idx) => (
                               <li key={idx} className="flex items-start gap-2 text-sm text-muted-foreground">
                                 <CheckCircle2 className="h-4 w-4 text-emerald-600 mt-0.5" />
                                 <span>{obj}</span>
@@ -257,11 +273,11 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                             ))}
                           </ul>
                         ) : (
-                          <div className="text-sm text-muted-foreground">{l.subtitle || 'No additional description'}</div>
+                          <div className="text-sm text-muted-foreground">{lSubtitle || 'No additional description'}</div>
                         )}
                       </AccordionContent>
                     </AccordionItem>
-                  ))}
+                  );})}
                 </Accordion>
               </CardContent>
             </Card>
@@ -279,8 +295,8 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                    <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-emerald-600" /> <span><strong>{lessonCount}</strong> lessons</span></div>
-                    <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-emerald-600" /> ~{derivedHours}h total</div>
+                    <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-emerald-600" /> <span><strong>{lessonCount}</strong> {t('lessonsLabel')}</span></div>
+                    <div className="flex items-center gap-2"><Clock className="h-4 w-4 text-emerald-600" /> ~{derivedHours}h {t('totalLabel')}</div>
                     {journey.level ? (
                       <div className="flex items-center gap-2"><GraduationCap className="h-4 w-4 text-emerald-600" /> <span className="capitalize">{journey.level}</span></div>
                     ) : null}
@@ -324,8 +340,8 @@ export default async function JourneyPage({ params }: { params: Promise<{ journe
         ) : lessons.length === 0 ? (
           <Card>
             <CardHeader>
-              <CardTitle>No lessons yet</CardTitle>
-              <CardDescription>Check back soon for new lessons in this module.</CardDescription>
+              <CardTitle>{t('noLessons')}</CardTitle>
+              <CardDescription>{t('noLessonsSub')}</CardDescription>
             </CardHeader>
           </Card>
         ) : null}

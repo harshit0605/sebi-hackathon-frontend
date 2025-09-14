@@ -6,6 +6,7 @@ import { Breadcrumb, BreadcrumbList, BreadcrumbItem, BreadcrumbLink, BreadcrumbS
 import Link from 'next/link';
 import Image from 'next/image';
 import { BookOpen, Clock, ArrowLeft } from 'lucide-react';
+import { getLocale, getTranslations } from 'next-intl/server';
 import type { LearningJourney } from '@/lib/learn/types';
 
 function levelBadge(level?: string) {
@@ -69,6 +70,12 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
         loadError = err?.message || 'Failed to load modules';
     }
 
+    // Resolve current UI language from next-intl and apply UI-level fallback to 'en'
+    const locale = await getLocale();
+    const uiLang = (locale as string) || 'en';
+    const t = await getTranslations('modulesIndex');
+    const tm = await getTranslations('modulesPage');
+
     const resolvedSearchParams = await searchParams;
 
     const rawSource = Array.isArray(resolvedSearchParams?.source)
@@ -85,8 +92,10 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
     }
     const sources = Array.from(sourceMap.entries()).map(([url, meta]) => ({ url, title: meta.title }));
 
-    const filteredJourneys = selectedSource
-        ? journeys.filter((j) => (j as any)?.source_url === selectedSource)
+    // When "All sources" is selected (no query) or `source=all`, include everything
+    const normalizedSource = (selectedSource || '').trim();
+    const filteredJourneys = normalizedSource && normalizedSource.toLowerCase() !== 'all'
+        ? journeys.filter((j) => (j as any)?.source_url === normalizedSource)
         : journeys;
 
     return (
@@ -108,11 +117,11 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
                 <section className="relative overflow-hidden rounded-2xl p-6 md:p-5 bg-white/30 dark:bg-white/10 backdrop-blur-lg shadow-lg">
                     <div className="relative z-10 flex items-start justify-between gap-4">
                         <div className="space-y-2">
-                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">Learning Modules</h1>
-                            <p className="text-muted-foreground">Structured journeys with outcomes, prerequisites, and time estimates.</p>
+                            <h1 className="text-3xl md:text-4xl font-black tracking-tight">{t('title')}</h1>
+                            <p className="text-muted-foreground">{t('subtitle')}</p>
                         </div>
                         <Button asChild variant="ghost" size="sm" className="rounded-full gap-2">
-                            <Link href="/learn"><ArrowLeft className="h-4 w-4" /> Back to Learn</Link>
+                            <Link href="/learn"><ArrowLeft className="h-4 w-4" /> {t('backToLearn')}</Link>
                         </Button>
                     </div>
                     <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-gradient-to-br from-brand-100 to-transparent blur-2xl" />
@@ -123,7 +132,13 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
                 {sources.length > 0 ? (
                     <div className="flex flex-wrap gap-2 items-center">
                         <Link href="/learn/modules" prefetch>
-                            <Button variant={selectedSource ? 'outline' : 'default'} size="sm" className="rounded-full">All sources</Button>
+                            <Button
+                                variant={!selectedSource || selectedSource.toLowerCase() === 'all' ? 'default' : 'outline'}
+                                size="sm"
+                                className="rounded-full"
+                            >
+                                {t('allSources')}
+                            </Button>
                         </Link>
                         {sources.map((s) => {
                             const isActive = selectedSource === s.url;
@@ -142,7 +157,7 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
                 {loadError ? (
                     <Card>
                         <CardHeader>
-                            <CardTitle>Unable to load modules</CardTitle>
+                            <CardTitle>{t('unableTitle')}</CardTitle>
                             <CardDescription>
                                 {loadError}. Ensure MongoDB is configured (MONGODB_URI) and the journeys collection is accessible.
                             </CardDescription>
@@ -151,27 +166,29 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
                 ) : journeys.length === 0 ? (
                     <Card>
                         <CardHeader>
-                            <CardTitle>No modules yet</CardTitle>
-                            <CardDescription>When journeys are available, they will appear here.</CardDescription>
+                            <CardTitle>{t('noModulesTitle')}</CardTitle>
+                            <CardDescription>{t('noModulesDesc')}</CardDescription>
                         </CardHeader>
                     </Card>
                 ) : filteredJourneys.length === 0 ? (
                     <Card>
                         <CardHeader>
-                            <CardTitle>No modules for this source</CardTitle>
-                            <CardDescription>
-                                Try clearing the filter or selecting another source.
-                            </CardDescription>
+                            <CardTitle>{t('noSourceTitle')}</CardTitle>
+                            <CardDescription>{t('noSourceDesc')}</CardDescription>
                         </CardHeader>
                     </Card>
                 ) : (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
-                        {filteredJourneys.map((j) => (
+                        {filteredJourneys.map((j) => {
+                            const langData = (j as any)?.languages?.[uiLang] || (j as any)?.languages?.en || {};
+                            const title = (langData?.title as string | undefined) ?? (j as any)?.title ?? j.slug;
+                            const description = (langData?.description as string | undefined) ?? (j as any)?.description ?? '';
+                            return (
                             <Card key={j._id} className="overflow-hidden hover:shadow-lg transition-shadow flex flex-col h-full pt-0">
                                 <div className="relative aspect-video">
                                     <Image
                                         src={normalizeCoverImage((j as any).cover_image)}
-                                        alt={j.title}
+                                        alt={title}
                                         fill
                                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         className="object-cover"
@@ -183,16 +200,16 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
                                     </div>
                                 </div>
                                 <CardHeader className="pb-1">
-                                    <CardTitle className="text-lg line-clamp-2">{j.title}</CardTitle>
-                                    {j.description ? (
-                                        <CardDescription className="text-sm text-muted-foreground line-clamp-4">{j.description}</CardDescription>
+                                    <CardTitle className="text-lg line-clamp-2">{title}</CardTitle>
+                                    {description ? (
+                                        <CardDescription className="text-sm text-muted-foreground line-clamp-4">{description}</CardDescription>
                                     ) : null}
                                 </CardHeader>
                                 <CardContent className="mt-auto pt-2 flex flex-col gap-2">
                                     <div className="flex items-center justify-between text-sm text-muted-foreground">
                                         <span className="flex items-center gap-1">
                                             <BookOpen className="h-4 w-4" />
-                                            {j.lesson_count ?? 0} lessons
+                                            {j.lesson_count ?? 0} {tm('lessonsLabel')}
                                         </span>
                                         <span className="flex items-center gap-1">
                                             <Clock className="h-4 w-4" />
@@ -201,11 +218,11 @@ export default async function ModulesPage({ searchParams }: { searchParams?: Pro
                                     </div>
 
                                     <Button asChild className="w-full">
-                                        <Link href={`/learn/modules/${j.slug}`}>Open Module</Link>
+                                        <Link href={`/learn/modules/${j.slug}`}>{t('openModule')}</Link>
                                     </Button>
                                 </CardContent>
                             </Card>
-                        ))}
+                        );})}
                     </div>
                 )}
             </div>

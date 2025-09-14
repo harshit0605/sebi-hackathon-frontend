@@ -49,6 +49,22 @@ export type ProductType = 'CNC' | 'MIS' | 'NRML';
 export type TransactionType = 'BUY' | 'SELL';
 export type OrderStatus = 'PENDING' | 'OPEN' | 'COMPLETE' | 'CANCELLED' | 'REJECTED';
 
+// Common market entity types
+export type RiskLevel = 'low' | 'medium' | 'high';
+
+export type Stock = {
+  id: string;
+  symbol: string;
+  name: string;
+  sector: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  marketCap: number;
+  pe: number;
+  dividend: number;
+};
+
 export type Order = {
   id: string;
   symbol: string;

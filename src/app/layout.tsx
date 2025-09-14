@@ -5,6 +5,8 @@ import { Navbar } from '@/components/navigation/navbar';
 
 import { Providers } from '@/components/providers';
 import "@copilotkit/react-ui/styles.css";
+import { NextIntlClientProvider } from 'next-intl';
+import { getLocale, getMessages } from 'next-intl/server';
 
 const inter = Inter({
   variable: "--font-inter",
@@ -42,13 +44,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
   return (
-    <html lang="en" className="h-full">
+    <html lang={locale} className="h-full">
       <head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -60,10 +64,12 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased h-full bg-gradient-to-br from-brand-50 via-white to-emerald-50`}
       >
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <Providers>
+            <Navbar />
+            {children}
+          </Providers>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

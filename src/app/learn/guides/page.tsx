@@ -9,6 +9,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
 import Image from 'next/image';
+import { getLocale } from 'next-intl/server';
 
 // Normalize cover images:
 // - If given a Google Drive preview/uc link, transform to a thumbnail image URL
@@ -54,6 +55,9 @@ export default async function GuidesPage() {
         loadError = err?.message || 'Failed to load guides';
     }
 
+    const locale = await getLocale();
+    const uiLang = (locale as string) || 'en';
+
     return (
         <MainLayout>
             <div className="container mx-auto px-4 py-2 space-y-4">
@@ -93,7 +97,9 @@ export default async function GuidesPage() {
                 ) : (
                     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 items-stretch">
                         {guides.map((g) => {
-                            const preferred = g.variants.find((v) => v.language === 'en') ?? g.variants[0];
+                            const preferred = g.variants.find((v) => v.language === (uiLang as any))
+                                ?? g.variants.find((v) => v.language === 'en')
+                                ?? g.variants[0];
                             const title = preferred?.title ?? g.title ?? 'Guide';
                             const summary = preferred?.summary ?? g.summary;
                             const { Icon, label } = typeMeta(g.source_type);

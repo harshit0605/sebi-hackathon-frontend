@@ -12,14 +12,24 @@ import rehypeRaw from 'rehype-raw';
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { MusicCard, DriveMusicEmbedCard } from '@/components/ui/music-card';
 import Link from 'next/link';
+import { useLocale } from 'next-intl';
 
 export type GuideViewerProps = { guide: Guide };
 
 export default function GuideViewer({ guide }: GuideViewerProps) {
-    const [lang, setLang] = useState<GuideLanguage>(() => {
-        const langs = Array.from(new Set(guide.variants.map((v) => v.language))) as GuideLanguage[];
-        return (langs.includes('en') ? 'en' : langs[0]) ?? 'en';
-    });
+    const locale = useLocale();
+    const availableLangs = useMemo(() => Array.from(new Set(guide.variants.map((v) => v.language))) as GuideLanguage[], [guide.variants]);
+    const initialLang = (availableLangs.includes(locale as GuideLanguage) ? (locale as GuideLanguage)
+        : (availableLangs.includes('en') ? 'en' : availableLangs[0])) as GuideLanguage;
+    const [lang, setLang] = useState<GuideLanguage>(initialLang);
+
+    // If user changes navbar language, reflect here when available
+    useEffect(() => {
+        const nextLang = (availableLangs.includes(locale as GuideLanguage) ? (locale as GuideLanguage)
+            : (availableLangs.includes('en') ? 'en' : availableLangs[0])) as GuideLanguage;
+        setLang(nextLang);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [locale, availableLangs.join('|')]);
 
     const byLanguage = useMemo(() => {
         const map: Record<GuideLanguage, typeof guide.variants> = { en: [], hi: [] };

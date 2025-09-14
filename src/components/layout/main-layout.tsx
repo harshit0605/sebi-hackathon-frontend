@@ -15,7 +15,8 @@ export function MainLayout({ children }: MainLayoutProps) {
     name: session.user.name || '',
     email: session.user.email,
     image: session.user.image,
-    language: (session.user.language === 'hi' ? 'hi' : 'en') as 'en' | 'hi',
+    // language: (session.user?.language === 'hi' ? 'hi' : 'en') as 'en' | 'hi',
+    language: 'en',
   } : undefined;
 
   return (
